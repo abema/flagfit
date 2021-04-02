@@ -39,7 +39,7 @@ class FlagType {
       return true
     }
 
-    override fun flagSourceType(annotation: WorkInProgress): KClass<JustFlagSource.False> {
+    override fun flagSourceClass(annotation: WorkInProgress): KClass<JustFlagSource.False> {
       return JustFlagSource.False::class
     }
 
@@ -56,7 +56,7 @@ class FlagType {
       return true
     }
 
-    override fun flagSourceType(annotation: Ops): KClass<OpsFlagSource> {
+    override fun flagSourceClass(annotation: Ops): KClass<OpsFlagSource> {
       return OpsFlagSource::class
     }
 
@@ -73,7 +73,7 @@ class FlagType {
       return true
     }
 
-    override fun flagSourceType(annotation: Experiment): KClass<ExperimentFlagSource> {
+    override fun flagSourceClass(annotation: Experiment): KClass<ExperimentFlagSource> {
       return ExperimentFlagSource::class
     }
 
@@ -90,7 +90,7 @@ class FlagType {
       return true
     }
 
-    override fun flagSourceType(annotation: Permission): KClass<PermissionFlagSource> {
+    override fun flagSourceClass(annotation: Permission): KClass<PermissionFlagSource> {
       return PermissionFlagSource::class
     }
 

@@ -92,10 +92,10 @@ class Flagfit(
     return requireNotNull(proxy)
   }
 
-  private fun getFlagSourceByClass(flagType: Class<out FlagSource>): FlagSource {
-    return classToFlagSourceCache.getOrPut(flagType) {
+  private fun getFlagSourceByClass(flagSourceClass: Class<out FlagSource>): FlagSource {
+    return classToFlagSourceCache.getOrPut(flagSourceClass) {
       flagSources.first {
-        flagType.isAssignableFrom(it.javaClass)
+        flagSourceClass.isAssignableFrom(it.javaClass)
       }
     }
   }
@@ -216,7 +216,7 @@ class Flagfit(
       val env = baseEnv + annotationBooleanEnvList
         .associate { it.key to it.value }
 
-      var annotatedFlagSourceType: Class<out FlagSource>? = null
+      var annotatedFlagSourceClass: Class<out FlagSource>? = null
       for (annotationAdapter in annotationAdapters) {
         val annotationClass = annotationAdapter.annotationClass().java
 
@@ -227,17 +227,17 @@ class Flagfit(
         @Suppress("UNCHECKED_CAST")
         val adapter = annotationAdapter as AnnotationAdapter<Annotation>
         if (adapter.canHandle(annotation, env)) {
-          annotatedFlagSourceType = adapter.flagSourceType(annotation).java
+          annotatedFlagSourceClass = adapter.flagSourceClass(annotation).java
           break
         }
       }
 
-      val flagSource = annotatedFlagSourceType?.let {
+      val flagSource = annotatedFlagSourceClass?.let {
         try {
-          getFlagSourceByClass(annotatedFlagSourceType)
+          getFlagSourceByClass(annotatedFlagSourceClass)
         } catch (e: NoSuchElementException) {
           throw IllegalArgumentException(
-            "Flag source($annotatedFlagSourceType) not found for method: ${method.name}"
+            "Flag source($annotatedFlagSourceClass) not found for method: ${method.name}"
           )
         }
       }

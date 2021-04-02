@@ -408,7 +408,7 @@ interface SuspendableService {
 }
 
 annotation class DevelopWith(
-  val flagType: KClass<out FlagSource>
+  val flagSourceClass: KClass<out FlagSource>
 )
 
 class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
@@ -419,8 +419,8 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return env[ENV_IS_DEVELOP_KEY] == true
   }
 
-  override fun flagSourceType(annotation: DevelopWith): KClass<out FlagSource> {
-    return annotation.flagType
+  override fun flagSourceClass(annotation: DevelopWith): KClass<out FlagSource> {
+    return annotation.flagSourceClass
   }
 
   override fun annotationClass(): KClass<DevelopWith> {

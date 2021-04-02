@@ -11,7 +11,7 @@ class DefaultAnnotationAdapter : AnnotationAdapter<DefaultWith> {
     return true
   }
 
-  override fun flagSourceType(annotation: DefaultWith): KClass<out FlagSource> {
+  override fun flagSourceClass(annotation: DefaultWith): KClass<out FlagSource> {
     return annotation.value
   }
 
