@@ -255,7 +255,7 @@ This library uses the Flagfit library and provides some intentional flag type an
 https://martinfowler.com/articles/feature-toggles.html
 
 
-### Introduction
+### Introduction for default flag types
 
 As we develop, we use Release Toggles, Experiment Toggles, and Opts Toggles for features.
 We develop by switching these flags.
@@ -284,37 +284,31 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
 fun awesomeFeatureEnabled(): Boolean
 ```
 
-```kotlin
-class MyLocalFlagSource @Inject constructor(
-  val disk: Disk
-) : BlockingBooleanFlagSource,
-    /* **please implement ExperimentFlagSource ** */
-    ExperimentFlagSource {
-  override fun get(
-    key: String,
-    defaultValue: Boolean,
-    env: Map<String, Any>
-  ): Boolean {
-    return disk.readFlag(key, defaultValue)
-  }
-}
-
-val flagfit = Flagfit(
-    flagSources = listOf(localFlagSource),
-...
-```
-
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well. If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
 
-### Setup
+### Setup for default flag types
 
 See the Flagfit documentation for basic setup steps.
 You can use the default flag types as follows:
 
 ```kotlin
+class MyLocalFlagSource @Inject constructor(
+    val disk: Disk
+) : BlockingBooleanFlagSource,
+    /* **please implement ExperimentFlagSource ** */
+    ExperimentFlagSource {
+    override fun get(
+        key: String,
+        defaultValue: Boolean,
+        env: Map<String, Any>
+    ): Boolean {
+        return disk.readFlag(key, defaultValue)
+    }
+}
+
 val flagfit = Flagfit(
   // To use @FlagType.Experiment or @FlagType.Ops, you need to set an object that implements ExperimentFlagSource or OpsFlagSource.
-  flagSources = listOf(experimentFlagSource),
+  flagSources = listOf(myLocalFlagSource),
   baseEnv = mapOf(
     Flagfit.ENV_IS_DEBUG_KEY to BuildConfig.DEBUG
   ),
