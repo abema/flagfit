@@ -1,0 +1,2 @@
+include ':flagfit'
+include ':flagfit-flagtype'

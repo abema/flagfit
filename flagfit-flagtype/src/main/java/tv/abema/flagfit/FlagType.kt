@@ -1,0 +1,110 @@
+package tv.abema.flagfit
+
+import kotlin.reflect.KClass
+
+class FlagType {
+  /**
+   * > Release Toggles allow incomplete and un-tested codepaths to be shipped to production as latent code which may never be turned on.
+   *
+   * [Release Toggles](https://martinfowler.com/articles/feature-toggles.html#ReleaseToggles)
+   */
+  annotation class WorkInProgress
+
+  /**
+   * > Experiment Toggles are used to perform multivariate or A/B testing.
+   *
+   * [Experiment Toggles](https://martinfowler.com/articles/feature-toggles.html#ExperimentToggles)
+   */
+  annotation class Experiment
+
+  /**
+   * > These flags are used to control operational aspects of our system's behavior.
+   *
+   * [Ops Toggles](https://martinfowler.com/articles/feature-toggles.html#OpsToggles)
+   */
+  annotation class Ops
+
+  /**
+   * > These flags are used to change the features or product experience that certain users receive.
+   *
+   * [Permissioning Toggles](https://martinfowler.com/articles/feature-toggles.html#PermissioningToggles)
+   */
+  annotation class Permission
+
+  class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
+    override fun canHandle(
+      annotation: WorkInProgress,
+      env: Map<String, Any>
+    ): Boolean {
+      return true
+    }
+
+    override fun flagType(annotation: WorkInProgress): KClass<JustFlagSource.False> {
+      return JustFlagSource.False::class
+    }
+
+    override fun annotationClass(): Class<WorkInProgress> {
+      return WorkInProgress::class.java
+    }
+  }
+
+  class OpsAnnotationAdapter : AnnotationAdapter<Ops> {
+    override fun canHandle(
+      annotation: Ops,
+      env: Map<String, Any>
+    ): Boolean {
+      return true
+    }
+
+    override fun flagType(annotation: Ops): KClass<OpsFlagSource> {
+      return OpsFlagSource::class
+    }
+
+    override fun annotationClass(): Class<Ops> {
+      return Ops::class.java
+    }
+  }
+
+  class ExperimentAnnotationAdapter : AnnotationAdapter<Experiment> {
+    override fun canHandle(
+      annotation: Experiment,
+      env: Map<String, Any>
+    ): Boolean {
+      return true
+    }
+
+    override fun flagType(annotation: Experiment): KClass<ExperimentFlagSource> {
+      return ExperimentFlagSource::class
+    }
+
+    override fun annotationClass(): Class<Experiment> {
+      return Experiment::class.java
+    }
+  }
+
+  class PermissionAnnotationAdapter : AnnotationAdapter<Permission> {
+    override fun canHandle(
+      annotation: Permission,
+      env: Map<String, Any>
+    ): Boolean {
+      return true
+    }
+
+    override fun flagType(annotation: Permission): KClass<PermissionFlagSource> {
+      return PermissionFlagSource::class
+    }
+
+    override fun annotationClass(): Class<Permission> {
+      return Permission::class.java
+    }
+  }
+
+  companion object {
+    fun annotationAdapters() = listOf(
+      WorkInProgressAnnotationAdapter(),
+      ExperimentAnnotationAdapter(),
+      OpsAnnotationAdapter(),
+      PermissionAnnotationAdapter()
+    )
+  }
+}
