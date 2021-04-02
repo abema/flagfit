@@ -216,7 +216,7 @@ class Flagfit(
       val env = baseEnv + annotationBooleanEnvList
         .associate { it.key to it.value }
 
-      var annotatedFlagType: Class<out FlagSource>? = null
+      var annotatedFlagSourceType: Class<out FlagSource>? = null
       for (annotationAdapter in annotationAdapters) {
         val annotationClass = annotationAdapter.annotationClass().java
 
@@ -227,17 +227,17 @@ class Flagfit(
         @Suppress("UNCHECKED_CAST")
         val adapter = annotationAdapter as AnnotationAdapter<Annotation>
         if (adapter.canHandle(annotation, env)) {
-          annotatedFlagType = adapter.flagType(annotation).java
+          annotatedFlagSourceType = adapter.flagSourceType(annotation).java
           break
         }
       }
 
-      val flagSource = annotatedFlagType?.let {
+      val flagSource = annotatedFlagSourceType?.let {
         try {
-          getFlagSourceByClass(annotatedFlagType)
+          getFlagSourceByClass(annotatedFlagSourceType)
         } catch (e: NoSuchElementException) {
           throw IllegalArgumentException(
-            "Flag source($annotatedFlagType) not found for method: ${method.name}"
+            "Flag source($annotatedFlagSourceType) not found for method: ${method.name}"
           )
         }
       }
