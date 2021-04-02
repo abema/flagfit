@@ -1,7 +1,7 @@
-# flagfit
+# Flagfit
 A Flexible Flag client for Android and Kotlin
 
-This library consists of a core **flagfit** library and a **flagfit-flagtype** library.
+This library consists of a core **Flagfit** library and a **Flagfit flagtype** library.
 
 ## Flagfit core features
 
@@ -125,7 +125,7 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return env[ENV_IS_DEVELOP_KEY] == true
   }
 
-  override fun flagSourceType(annotation: DevelopWith): KClass<out FlagSource> {
+  override fun flagSourceClass(annotation: DevelopWith): KClass<out FlagSource> {
     return annotation.value
   }
 
