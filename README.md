@@ -1,11 +1,9 @@
 # flagfit
-A Flexible Flag client
+A Flexible Flag client for Android and Java
 
 This library consists of a core **flagfit** library and a **flagfit-flagtype** library.
 
 ## Flagfit core features
-A Flexible Flag client for Android and Java
-
 
 ### Introduction
 
