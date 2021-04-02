@@ -250,17 +250,17 @@ sealed class FlagState(
 ```
 
 ## Flagfit default flag types
-This library uses the Flagfit library and provides some intentional flag type annotations according to Feature Toggles articles.
+This library uses the Flagfit library and provides some intentional flag type annotations according to Feature Toggles articles.  
 
 https://martinfowler.com/articles/feature-toggles.html
 
 
 ### Introduction for default flag types
 
-As we develop, we use Release Toggles, Experiment Toggles, and Opts Toggles for features.
-We develop by switching these flags.
-
-We use the `@WorkInProgress` as Release Toggles when we first start development.
+As we develop, we use Release Toggles, Experiment Toggles, and Opts Toggles for features.  
+We develop by switching these flags.  
+  
+We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@ToggleType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
 ```kotlin
@@ -272,7 +272,7 @@ If the flag using this `@ToggleType.WorkInProgress` is used properly, even if th
 fun awesomeFeatureEnabled(): Boolean
 ```
 
-Next, we do A / B testing and experiment with what we develop.
+Next, we do A / B testing and experiment with what we develop.  
 So we use `@FlagType.Experiment`. With it, you can use any flag management tool, such as Firebase RemoteConfig, to get the flag and use it. You need to pass a FlagSource that implements `ExperimentFlagSource` when initializing Flagfit.
 
 ```kotlin
@@ -284,11 +284,11 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
 fun awesomeFeatureEnabled(): Boolean
 ```
 
-Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well. If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
+Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
+If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
 
 ### Setup for default flag types
 
-See the Flagfit documentation for basic setup steps.
 You can use the default flag types as follows:
 
 ```kotlin
