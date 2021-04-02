@@ -11,7 +11,7 @@ class DebugAnnotationAdapter : AnnotationAdapter<DebugWith> {
     return env[Flagfit.ENV_IS_DEBUG_KEY] == true
   }
 
-  override fun flagType(annotation: DebugWith): KClass<out FlagSource> {
+  override fun flagSourceType(annotation: DebugWith): KClass<out FlagSource> {
     return annotation.value
   }
 

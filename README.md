@@ -125,7 +125,7 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return env[ENV_IS_DEVELOP_KEY] == true
   }
 
-  override fun flagType(annotation: DevelopWith): KClass<out FlagSource> {
+  override fun flagSourceType(annotation: DevelopWith): KClass<out FlagSource> {
     return annotation.value
   }
 

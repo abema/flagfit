@@ -11,7 +11,7 @@ class ReleaseAnnotationAdapter : AnnotationAdapter<ReleaseWith> {
     return env[Flagfit.ENV_IS_DEBUG_KEY] == false
   }
 
-  override fun flagType(annotation: ReleaseWith): KClass<out FlagSource> {
+  override fun flagSourceType(annotation: ReleaseWith): KClass<out FlagSource> {
     return annotation.value
   }
 
