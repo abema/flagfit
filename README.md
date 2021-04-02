@@ -5,7 +5,7 @@ This library consists of a core **Flagfit** library and a **Flagfit flagtype** l
 
 ## How to use
 
-```
+```groovy
 allprojects {
     repositories {
         ...
