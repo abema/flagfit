@@ -3,6 +3,26 @@ A Flexible Flag client for Android and Kotlin
 
 This library consists of a core **Flagfit** library and a **Flagfit flagtype** library.
 
+## How to use
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+```groovy
+dependencies {
+    // Flagfit
+    implementation 'com.github.abema.flagfit:flagfit:1.0.0'
+    // Flagfit flagtype
+    implementation 'com.github.abema.flagfit:flagfit-flagtype:1.0.0'
+}
+```
+
 ## Flagfit core features
 
 ### Introduction
