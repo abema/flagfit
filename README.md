@@ -131,8 +131,8 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return annotation.value
   }
 
-  override fun annotationClass(): Class<DevelopWith> {
-    return DevelopWith::class.java
+  override fun annotationClass(): KClass<DevelopWith> {
+    return DevelopWith::class
   }
 
   companion object {

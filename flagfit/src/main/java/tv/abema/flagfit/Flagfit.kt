@@ -218,7 +218,7 @@ class Flagfit(
 
       var annotatedFlagType: Class<out FlagSource>? = null
       for (annotationAdapter in annotationAdapters) {
-        val annotationClass = annotationAdapter.annotationClass()
+        val annotationClass = annotationAdapter.annotationClass().java
 
         val annotation = annotations
           .filterIsInstance(annotationClass)

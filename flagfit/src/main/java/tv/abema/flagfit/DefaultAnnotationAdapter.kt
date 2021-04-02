@@ -15,7 +15,7 @@ class DefaultAnnotationAdapter : AnnotationAdapter<DefaultWith> {
     return annotation.value
   }
 
-  override fun annotationClass(): Class<DefaultWith> {
-    return DefaultWith::class.java
+  override fun annotationClass(): KClass<DefaultWith> {
+    return DefaultWith::class
   }
 }

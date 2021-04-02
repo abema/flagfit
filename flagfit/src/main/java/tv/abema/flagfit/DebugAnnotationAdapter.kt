@@ -15,7 +15,7 @@ class DebugAnnotationAdapter : AnnotationAdapter<DebugWith> {
     return annotation.value
   }
 
-  override fun annotationClass(): Class<DebugWith> {
-    return DebugWith::class.java
+  override fun annotationClass(): KClass<DebugWith> {
+    return DebugWith::class
   }
 }

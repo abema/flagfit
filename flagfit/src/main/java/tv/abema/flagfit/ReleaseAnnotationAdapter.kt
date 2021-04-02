@@ -15,7 +15,7 @@ class ReleaseAnnotationAdapter : AnnotationAdapter<ReleaseWith> {
     return annotation.value
   }
 
-  override fun annotationClass(): Class<ReleaseWith> {
-    return ReleaseWith::class.java
+  override fun annotationClass(): KClass<ReleaseWith> {
+    return ReleaseWith::class
   }
 }

@@ -43,8 +43,8 @@ class FlagType {
       return JustFlagSource.False::class
     }
 
-    override fun annotationClass(): Class<WorkInProgress> {
-      return WorkInProgress::class.java
+    override fun annotationClass(): KClass<WorkInProgress> {
+      return WorkInProgress::class
     }
   }
 
@@ -60,8 +60,8 @@ class FlagType {
       return OpsFlagSource::class
     }
 
-    override fun annotationClass(): Class<Ops> {
-      return Ops::class.java
+    override fun annotationClass(): KClass<Ops> {
+      return Ops::class
     }
   }
 
@@ -77,8 +77,8 @@ class FlagType {
       return ExperimentFlagSource::class
     }
 
-    override fun annotationClass(): Class<Experiment> {
-      return Experiment::class.java
+    override fun annotationClass(): KClass<Experiment> {
+      return Experiment::class
     }
   }
 
@@ -94,8 +94,8 @@ class FlagType {
       return PermissionFlagSource::class
     }
 
-    override fun annotationClass(): Class<Permission> {
-      return Permission::class.java
+    override fun annotationClass(): KClass<Permission> {
+      return Permission::class
     }
   }
 
