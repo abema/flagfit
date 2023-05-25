@@ -1,5 +1,6 @@
 package tv.abema.flagfit
 
+import tv.abema.flagfit.Extension.toLocalDate
 import kotlin.reflect.KClass
 
 class FlagType {
@@ -8,33 +9,49 @@ class FlagType {
    *
    * [Release Toggles](https://martinfowler.com/articles/feature-toggles.html#ReleaseToggles)
    */
-  annotation class WorkInProgress
+  annotation class WorkInProgress(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   /**
    * > Experiment Toggles are used to perform multivariate or A/B testing.
    *
    * [Experiment Toggles](https://martinfowler.com/articles/feature-toggles.html#ExperimentToggles)
    */
-  annotation class Experiment
+  annotation class Experiment(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   /**
    * > These flags are used to control operational aspects of our system's behavior.
    *
    * [Ops Toggles](https://martinfowler.com/articles/feature-toggles.html#OpsToggles)
    */
-  annotation class Ops
+  annotation class Ops(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   /**
    * > These flags are used to change the features or product experience that certain users receive.
    *
    * [Permissioning Toggles](https://martinfowler.com/articles/feature-toggles.html#PermissioningToggles)
    */
-  annotation class Permission
+  annotation class Permission(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
     override fun canHandle(
       annotation: WorkInProgress,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -46,12 +63,20 @@ class FlagType {
     override fun annotationClass(): KClass<WorkInProgress> {
       return WorkInProgress::class
     }
+
+    override fun flagMetaData(annotation: WorkInProgress): FlagMetadata {
+      return FlagMetadata(
+        author = annotation.author,
+        description = annotation.description,
+        expiryDate = annotation.expiryDate.toLocalDate()
+      )
+    }
   }
 
   class OpsAnnotationAdapter : AnnotationAdapter<Ops> {
     override fun canHandle(
       annotation: Ops,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -63,12 +88,20 @@ class FlagType {
     override fun annotationClass(): KClass<Ops> {
       return Ops::class
     }
+
+    override fun flagMetaData(annotation: Ops): FlagMetadata {
+      return FlagMetadata(
+        author = annotation.author,
+        description = annotation.description,
+        expiryDate = annotation.expiryDate.toLocalDate()
+      )
+    }
   }
 
   class ExperimentAnnotationAdapter : AnnotationAdapter<Experiment> {
     override fun canHandle(
       annotation: Experiment,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -80,12 +113,20 @@ class FlagType {
     override fun annotationClass(): KClass<Experiment> {
       return Experiment::class
     }
+
+    override fun flagMetaData(annotation: Experiment): FlagMetadata {
+      return FlagMetadata(
+        author = annotation.author,
+        description = annotation.description,
+        expiryDate = annotation.expiryDate.toLocalDate()
+      )
+    }
   }
 
   class PermissionAnnotationAdapter : AnnotationAdapter<Permission> {
     override fun canHandle(
       annotation: Permission,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -96,6 +137,14 @@ class FlagType {
 
     override fun annotationClass(): KClass<Permission> {
       return Permission::class
+    }
+
+    override fun flagMetaData(annotation: Permission): FlagMetadata {
+      return FlagMetadata(
+        author = annotation.author,
+        description = annotation.description,
+        expiryDate = annotation.expiryDate.toLocalDate()
+      )
     }
   }
 

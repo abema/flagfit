@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy
+import java.time.LocalDate
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.startCoroutine
 import kotlin.reflect.KClass
@@ -15,7 +16,7 @@ class Flagfit(
   flagSources: List<FlagSource> = listOf(),
   val baseEnv: Map<String, Any> = mapOf(),
   val variationAdapters: List<VariationAdapterInterface<*>> = listOf(),
-  annotationAdapters: List<AnnotationAdapter<out Annotation>> = mutableListOf()
+  annotationAdapters: List<AnnotationAdapter<out Annotation>> = mutableListOf(),
 ) {
   private val flagSources = flagSources + JustFlagSource.True + JustFlagSource.False
   private val classToFlagSourceCache = mutableMapOf<Class<*>, FlagSource>()
@@ -44,7 +45,7 @@ class Flagfit(
                   _,
                   flagSource,
                   isSuspendFunction,
-                  env
+                  env,
                 ) = flagState
                 return when (flagSource) {
                   null -> flagAnnotation.defaultValue
@@ -58,6 +59,7 @@ class Flagfit(
                       )
                 }
               }
+
               is FlagState.VariationFlagState -> {
                 val (
                   flagAnnotation,
@@ -65,13 +67,14 @@ class Flagfit(
                   _,
                   flagSource,
                   isSuspendFunction,
-                  env
+                  env,
                 ) = flagState
 
                 return when (flagSource) {
                   null -> variationAdapter.variationOf(
                     flagAnnotation.defaultValue
                   )
+
                   else -> {
                     flagSource
                       .callFlag(
@@ -143,7 +146,7 @@ class Flagfit(
     flagAnnotation: BooleanFlag,
     isSuspendFunction: Boolean,
     args: Array<Any>?,
-    env: Map<String, Any>
+    env: Map<String, Any>,
   ): Any {
     val flagSource = this
     return if (isSuspendFunction) {
@@ -171,7 +174,7 @@ class Flagfit(
     isSuspendFunction: Boolean,
     variationAdapter: VariationAdapterInterface<*>,
     args: Array<Any>?,
-    env: Map<String, Any>
+    env: Map<String, Any>,
   ): Any {
     val flagSource = this
     return if (isSuspendFunction) {
@@ -199,7 +202,7 @@ class Flagfit(
   }
 
   private fun resolveFlagState(
-    method: Method
+    method: Method,
   ): FlagState {
     return flagStateCache.getOrPut(method) {
       checkLastParameter(method.parameterTypes)
@@ -230,6 +233,11 @@ class Flagfit(
           annotatedFlagSourceClass = adapter.flagSourceClass(annotation).java
           break
         }
+        val expire = adapter.flagMetaData(annotation).expiryDate
+        val now = LocalDate.now()
+        if (expire < now) {
+          throw Exception("Please remove the ${adapter::class.java.simpleName} that is set to expire on $expire")
+        }
       }
 
       val flagSource = annotatedFlagSourceClass?.let {
@@ -250,6 +258,7 @@ class Flagfit(
           flagSource = flagSource,
           env = env
         )
+
         variationFlagAnnotation != null -> {
           val returnType = if (!isSuspendFunction) {
             method.returnType
@@ -272,6 +281,7 @@ class Flagfit(
             env = env
           )
         }
+
         else -> error("@BooleanFlag or @VariationFlag annotation is required")
       }
     }
@@ -286,7 +296,7 @@ class Flagfit(
     // mutable for debug
     open var flagSource: FlagSource?,
     open val isSuspendFunction: Boolean,
-    open val env: Map<String, Any>
+    open val env: Map<String, Any>,
   ) {
     data class BooleanFlagState(
       val booleanFlag: BooleanFlag,
@@ -294,7 +304,7 @@ class Flagfit(
       // mutable for debug
       override var flagSource: FlagSource?,
       override val isSuspendFunction: Boolean,
-      override val env: Map<String, Any>
+      override val env: Map<String, Any>,
     ) : FlagState(method, flagSource, isSuspendFunction, env) {
       fun invokeFlag(service: Any): Boolean {
         return method.invoke(service) as Boolean
@@ -308,7 +318,7 @@ class Flagfit(
       override val method: Method,
       override var flagSource: FlagSource?,
       override val isSuspendFunction: Boolean,
-      override val env: Map<String, Any>
+      override val env: Map<String, Any>,
     ) : FlagState(method, flagSource, isSuspendFunction, env) {
       fun invokeFlag(service: Any): Any {
         return method.invoke(service) as Any
