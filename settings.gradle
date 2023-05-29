@@ -1,3 +1,4 @@
 include ':flagfit'
 include ':flagfit-flagtype'
 include ':lint'
+include ':sample-android'
