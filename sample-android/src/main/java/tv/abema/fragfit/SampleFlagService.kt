@@ -11,17 +11,22 @@ interface SampleFlagService {
     key = "new-awesome-ops-feature",
     defaultValue = false
   )
-  @DebugWith(JustFlagSource.True::class)
-  @ReleaseWith(JustFlagSource.False::class)
   @FlagType.Ops
   fun awesomeOpsFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-experiment-feature",
+    defaultValue = true
+  )
+  @FlagType.Experiment
+  fun awesomeExperimentFeatureEnabled(): Boolean
+
+  @BooleanFlag(
+    key = "new-awesome-permission-feature",
     defaultValue = false
   )
   @DebugWith(JustFlagSource.True::class)
   @ReleaseWith(JustFlagSource.False::class)
-  @FlagType.Experiment
-  fun awesomeExperimentFeatureEnabled(): Boolean
+  @FlagType.Permission
+  fun awesomePermissionFeatureEnabled(): Boolean
 }
