@@ -7,6 +7,21 @@ import tv.abema.flagfit.annotation.DebugWith
 import tv.abema.flagfit.annotation.ReleaseWith
 
 interface SampleFlagService {
+
+  @BooleanFlag(
+    key = "new-awesome-wip-feature",
+    defaultValue = false
+  )
+  @FlagType.WorkInProgress
+  fun awesomeWipFeatureEnabled(): Boolean
+
+  @BooleanFlag(
+    key = "new-awesome-experiment-feature",
+    defaultValue = false
+  )
+  @FlagType.Experiment
+  fun awesomeExperimentFeatureEnabled(): Boolean
+
   @BooleanFlag(
     key = "new-awesome-ops-feature",
     defaultValue = false
@@ -15,18 +30,17 @@ interface SampleFlagService {
   fun awesomeOpsFeatureEnabled(): Boolean
 
   @BooleanFlag(
-    key = "new-awesome-experiment-feature",
-    defaultValue = true
+    key = "new-awesome-permission-feature",
+    defaultValue = false
   )
-  @FlagType.Experiment
-  fun awesomeExperimentFeatureEnabled(): Boolean
+  @FlagType.Permission
+  fun awesomePermissionFeatureEnabled(): Boolean
 
   @BooleanFlag(
-    key = "new-awesome-permission-feature",
+    key = "new-awesome-debug-feature",
     defaultValue = false
   )
   @DebugWith(JustFlagSource.True::class)
   @ReleaseWith(JustFlagSource.False::class)
-  @FlagType.Permission
-  fun awesomePermissionFeatureEnabled(): Boolean
+  fun awesomeDebugFeatureEnabled(): Boolean
 }

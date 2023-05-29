@@ -8,23 +8,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import tv.abema.flagfit.DebugAnnotationAdapter
+import tv.abema.flagfit.FlagType
 import tv.abema.flagfit.Flagfit
 import tv.abema.flagfit.Flagfit.Companion.ENV_IS_DEBUG_KEY
 import tv.abema.flagfit.ReleaseAnnotationAdapter
 import tv.abema.fragfit.ui.theme.FlagfitSampleTheme
 
 class MainActivity : ComponentActivity() {
+  private val sampleFlagSource = SampleFlagSource()
 
-  val flagfit = Flagfit(
+  private val flagfit = Flagfit(
+    flagSources = listOf(sampleFlagSource),
     baseEnv = mapOf(
       ENV_IS_DEBUG_KEY to BuildConfig.DEBUG,
     ),
     annotationAdapters = listOf(
       DebugAnnotationAdapter(),
-      ReleaseAnnotationAdapter()
-    )
+      ReleaseAnnotationAdapter(),
+    ) + FlagType.annotationAdapters()
   )
+
   private val sampleFlagService: SampleFlagService = flagfit.create()
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
