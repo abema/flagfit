@@ -15,13 +15,13 @@ import tv.abema.flagfit.DebugAnnotationAdapter
 import tv.abema.flagfit.Flagfit
 import tv.abema.flagfit.Flagfit.Companion.ENV_IS_DEBUG_KEY
 import tv.abema.flagfit.ReleaseAnnotationAdapter
-import tv.abema.fragfit.ui.theme.FlagfitTheme
+import tv.abema.fragfit.ui.theme.FlagfitSampleTheme
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      FlagfitTheme {
+      FlagfitSampleTheme {
         Surface(
           modifier = Modifier.fillMaxSize(),
           color = MaterialTheme.colorScheme.background
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
           Column(
             verticalArrangement = Arrangement.Center
           ) {
-            FragfitComponent()
+            FragfitSampleComponent()
           }
         }
       }
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun FragfitComponent() {
+fun FragfitSampleComponent() {
   val flagfit = Flagfit(
     baseEnv = mapOf(
       ENV_IS_DEBUG_KEY to BuildConfig.DEBUG,
@@ -48,10 +48,10 @@ fun FragfitComponent() {
       ReleaseAnnotationAdapter()
     )
   )
-  val flagService: FlagService = flagfit.create()
+  val sampleFlagService: SampleFlagService = flagfit.create()
 
-  val awesomeExperimentFeatureEnabled = flagService.awesomeExperimentFeatureEnabled()
-  val awesomeOpsFeatureEnabled = flagService.awesomeOpsFeatureEnabled()
+  val awesomeExperimentFeatureEnabled = sampleFlagService.awesomeExperimentFeatureEnabled()
+  val awesomeOpsFeatureEnabled = sampleFlagService.awesomeOpsFeatureEnabled()
 
   val experimentText = if (awesomeExperimentFeatureEnabled) "New Function" else "Previous function"
   val opsText = if (awesomeOpsFeatureEnabled) "New Function" else "Previous function"

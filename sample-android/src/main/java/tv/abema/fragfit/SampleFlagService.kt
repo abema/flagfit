@@ -6,7 +6,7 @@ import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
 import tv.abema.flagfit.annotation.ReleaseWith
 
-interface FlagService {
+interface SampleFlagService {
   @BooleanFlag(
     key = "new-awesome-ops-feature",
     defaultValue = false
