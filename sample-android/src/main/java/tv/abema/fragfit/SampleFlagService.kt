@@ -12,28 +12,44 @@ interface SampleFlagService {
     key = "new-awesome-wip-feature",
     defaultValue = false
   )
-  @FlagType.WorkInProgress
+  @FlagType.WorkInProgress(
+    author = "Hoge Fuga",
+    description = "hogehoge",
+    expiryDate = "2022-12-30"
+  )
   fun awesomeWipFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-experiment-feature",
     defaultValue = false
   )
-  @FlagType.Experiment
+  @FlagType.Experiment(
+    author = "Hoge Fuga",
+    description = "hogehoge",
+    expiryDate = "2022-12-30"
+  )
   fun awesomeExperimentFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-ops-feature",
     defaultValue = false
   )
-  @FlagType.Ops
+  @FlagType.Ops(
+    author = "Hoge Fuga",
+    description = "hogehoge",
+    expiryDate = "2022-12-30"
+  )
   fun awesomeOpsFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-permission-feature",
     defaultValue = false
   )
-  @FlagType.Permission
+  @FlagType.Permission(
+    author = "Hoge Fuga",
+    description = "hogehoge",
+    expiryDate = "2022-12-30"
+  )
   fun awesomePermissionFeatureEnabled(): Boolean
 
   @BooleanFlag(
