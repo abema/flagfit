@@ -33,7 +33,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       package tv.abema.flagfit
       
       class FlagType {
-        annotation class Ops(
+        annotation class Experiment(
           val author: String,
           val description: String,
           val expiryDate: String,
@@ -44,7 +44,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   }
 
   @Test
-  fun testFlagTypeOpsExpiryWarning() {
+  fun testFlagTypeExperimentExpiryWarning() {
     lint()
       .files(
         stabBooleanFlag,
@@ -60,7 +60,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 key = "new-awesome-feature",
                 defaultValue = false
               )
-              @FlagType.Ops(
+              @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2022-12-30"
@@ -75,9 +75,9 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: Your @FlagType.Ops has expired!
-        Ops has expired. Please consider deleting @FlagType.Ops [DeadlineExpired]
-            @FlagType.Ops(
+        src/foo/Example.kt:10: Warning: Your @FlagType.Experiment has expired!
+        Please consider deleting @FlagType.Experiment [DeadlineExpired]
+            @FlagType.Experiment(
             ^
         0 errors, 1 warnings
         """.trimIndent()
@@ -85,7 +85,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   }
 
   @Test
-  fun testFlagTypeOpsNoExpiryWarning() {
+  fun testFlagTypeExperimentNoExpiryWarning() {
     lint()
       .files(
         stabBooleanFlag,
@@ -101,10 +101,54 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 key = "new-awesome-feature",
                 defaultValue = false
               )
-              @FlagType.Ops(
+              @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "3022-12-30"
+              )
+              fun awesomeWipFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
+  }
+
+  @Test
+  fun testNoExpiredDateFlagTypeNoExpiryWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        kotlin(
+          """
+          package tv.abema.flagfit
+    
+          class FlagType {
+            annotation class Ops(
+              val author: String,
+              val description: String,
+              val expiryDate: String = "",
+            )
+          }
+          """.trimIndent()
+        ),
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Ops(
+                author = "Hoge Fuga",
+                description = "hogehoge"
               )
               fun awesomeWipFeatureEnabled(): Boolean
           }

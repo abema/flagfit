@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter
 
 object Extension {
   @Suppress("NewApi")
-  fun String.toLocalDate(): LocalDate {
+  fun String.toLocalDate(): LocalDate? {
+    if (this.isEmpty()) return null
     val dateString = this
     val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return LocalDate.parse(dateString, dateFormat)

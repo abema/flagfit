@@ -34,7 +34,7 @@ class FlagType {
   annotation class Ops(
     val author: String,
     val description: String,
-    val expiryDate: String,
+    val expiryDate: String = "",
   )
 
   /**

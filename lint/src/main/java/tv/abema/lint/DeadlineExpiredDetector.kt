@@ -38,13 +38,15 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     annotationInfo: AnnotationInfo,
     usageInfo: AnnotationUsageInfo,
   ) {
-    val expiryDateString = annotationInfo.annotation.attributeValues[2].evaluate().toString()
-    val expiryDate = LocalDate.parse(expiryDateString, DateTimeFormatter.ISO_LOCAL_DATE)
-    val currentDate = LocalDate.now()
-    if (currentDate.isAfter(expiryDate)) {
+    val annotationAttributes = annotationInfo.annotation.attributeValues
+    if (annotationAttributes.size == 2) return
+    val expiryDateString = annotationAttributes[2].evaluate().toString()
+    val expiryLocalDate = LocalDate.parse(expiryDateString, DateTimeFormatter.ISO_LOCAL_DATE)
+    val currentLocalDate = LocalDate.now()
+    if (currentLocalDate.isAfter(expiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
       val message = "Your @FlagType.$name has expired!\n" +
-        "Ops has expired. Please consider deleting @FlagType.$name"
+        "Please consider deleting @FlagType.$name"
       val location = context.getLocation(element)
       context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
     }

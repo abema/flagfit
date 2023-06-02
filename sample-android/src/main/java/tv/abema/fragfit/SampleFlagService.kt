@@ -26,7 +26,7 @@ interface SampleFlagService {
   @FlagType.Experiment(
     author = "Hoge Fuga",
     description = "hogehoge",
-    expiryDate = "2022-12-30"
+    expiryDate = "2322-12-30"
   )
   fun awesomeExperimentFeatureEnabled(): Boolean
 
@@ -36,8 +36,7 @@ interface SampleFlagService {
   )
   @FlagType.Ops(
     author = "Hoge Fuga",
-    description = "hogehoge",
-    expiryDate = "2022-12-30"
+    description = "hogehoge"
   )
   fun awesomeOpsFeatureEnabled(): Boolean
 

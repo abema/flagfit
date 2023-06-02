@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Proxy
-import java.time.LocalDate
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.startCoroutine
 import kotlin.reflect.KClass
@@ -37,7 +36,7 @@ class Flagfit(
         serviceClass.classLoader,
         arrayOf<Class<*>>(serviceClass),
         object : InvocationHandler {
-          override fun invoke(proxy: Any, method: Method, args: Array<Any>?): Any? {
+          override fun invoke(proxy: Any, method: Method, args: Array<Any>?): Any {
             when (val flagState = resolveFlagState(method)) {
               is FlagState.BooleanFlagState -> {
                 val (
@@ -232,11 +231,6 @@ class Flagfit(
         if (adapter.canHandle(annotation, env)) {
           annotatedFlagSourceClass = adapter.flagSourceClass(annotation).java
           break
-        }
-        val expire = adapter.flagMetaData(annotation).expiryDate
-        val now = LocalDate.now()
-        if (expire < now) {
-          throw Exception("Please remove the ${adapter::class.java.simpleName} that is set to expire on $expire")
         }
       }
 
