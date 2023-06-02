@@ -2,13 +2,13 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
 configurations {
-  lintChecks
+  lintPublish
 }
 
 dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   api project(":flagfit")
-  lintChecks project(":lint")
+  lintPublish project(":lint")
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
   testImplementation 'junit:junit:4.13.2'
 }

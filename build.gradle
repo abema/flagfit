@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        lintVersion = '31.0.2'
+    }
     repositories {
         google()
         mavenCentral()
