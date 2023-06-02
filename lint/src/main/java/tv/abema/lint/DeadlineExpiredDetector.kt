@@ -13,6 +13,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import org.jetbrains.uast.UElement
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.EnumSet
 
@@ -38,6 +39,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     annotationInfo: AnnotationInfo,
     usageInfo: AnnotationUsageInfo,
   ) {
+    val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE.withZone(ZoneId.of("Asia/Tokyo"))
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val author = annotationAttributes[0].evaluate().toString()
     if (annotationAttributes.size == 2) return
@@ -45,12 +47,12 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val currentLocalDate = if (annotationAttributes.size == 4) {
       LocalDate.parse(
         annotationAttributes[3].evaluate().toString(),
-        DateTimeFormatter.ISO_LOCAL_DATE
+        dateTimeFormatter
       )
     } else {
       LocalDate.now()
     }
-    val expiryLocalDate = LocalDate.parse(expiryDateString, DateTimeFormatter.ISO_LOCAL_DATE)
+    val expiryLocalDate = LocalDate.parse(expiryDateString, dateTimeFormatter)
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
