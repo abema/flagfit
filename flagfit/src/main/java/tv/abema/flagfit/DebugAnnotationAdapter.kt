@@ -18,13 +18,4 @@ class DebugAnnotationAdapter : AnnotationAdapter<DebugWith> {
   override fun annotationClass(): KClass<DebugWith> {
     return DebugWith::class
   }
-
-  override fun flagMetaData(annotation: DebugWith): FlagMetadata {
-    return FlagMetadata(
-      author = "",
-      description = "",
-      expiryDate = null,
-      nowDate = null
-    )
-  }
 }

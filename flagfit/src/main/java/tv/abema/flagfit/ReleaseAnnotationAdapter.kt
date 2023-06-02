@@ -18,13 +18,4 @@ class ReleaseAnnotationAdapter : AnnotationAdapter<ReleaseWith> {
   override fun annotationClass(): KClass<ReleaseWith> {
     return ReleaseWith::class
   }
-
-  override fun flagMetaData(annotation: ReleaseWith): FlagMetadata {
-    return FlagMetadata(
-      author = "",
-      description = "",
-      expiryDate = null,
-      nowDate = null
-    )
-  }
 }

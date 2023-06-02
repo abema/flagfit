@@ -1,6 +1,5 @@
 package tv.abema.flagfit
 
-import tv.abema.flagfit.Extension.toLocalDate
 import kotlin.reflect.KClass
 
 class FlagType {
@@ -67,15 +66,6 @@ class FlagType {
     override fun annotationClass(): KClass<WorkInProgress> {
       return WorkInProgress::class
     }
-
-    override fun flagMetaData(annotation: WorkInProgress): FlagMetadata {
-      return FlagMetadata(
-        author = annotation.author,
-        description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate(),
-        nowDate = annotation.nowDate.toLocalDate()
-      )
-    }
   }
 
   class OpsAnnotationAdapter : AnnotationAdapter<Ops> {
@@ -92,16 +82,6 @@ class FlagType {
 
     override fun annotationClass(): KClass<Ops> {
       return Ops::class
-    }
-
-    override fun flagMetaData(annotation: Ops): FlagMetadata {
-      return FlagMetadata(
-        author = annotation.author,
-        description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate(),
-        nowDate = annotation.nowDate.toLocalDate()
-
-      )
     }
   }
 
@@ -120,15 +100,6 @@ class FlagType {
     override fun annotationClass(): KClass<Experiment> {
       return Experiment::class
     }
-
-    override fun flagMetaData(annotation: Experiment): FlagMetadata {
-      return FlagMetadata(
-        author = annotation.author,
-        description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate(),
-        nowDate = annotation.nowDate.toLocalDate()
-      )
-    }
   }
 
   class PermissionAnnotationAdapter : AnnotationAdapter<Permission> {
@@ -145,15 +116,6 @@ class FlagType {
 
     override fun annotationClass(): KClass<Permission> {
       return Permission::class
-    }
-
-    override fun flagMetaData(annotation: Permission): FlagMetadata {
-      return FlagMetadata(
-        author = annotation.author,
-        description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate(),
-        nowDate = annotation.nowDate.toLocalDate()
-      )
     }
   }
 

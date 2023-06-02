@@ -18,13 +18,4 @@ class DefaultAnnotationAdapter : AnnotationAdapter<DefaultWith> {
   override fun annotationClass(): KClass<DefaultWith> {
     return DefaultWith::class
   }
-
-  override fun flagMetaData(annotation: DefaultWith): FlagMetadata {
-    return FlagMetadata(
-      author = "",
-      description = "",
-      expiryDate = null,
-      nowDate = null
-    )
-  }
 }

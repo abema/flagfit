@@ -6,5 +6,4 @@ interface AnnotationAdapter<T : Annotation> {
   fun annotationClass(): KClass<T>
   fun canHandle(annotation: T, env: Map<String, Any>): Boolean
   fun flagSourceClass(annotation: T): KClass<out FlagSource>
-  fun flagMetaData(annotation: T): FlagMetadata
 }

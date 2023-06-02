@@ -435,15 +435,6 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return DevelopWith::class
   }
 
-  override fun flagMetaData(annotation: DevelopWith): FlagMetadata {
-    return FlagMetadata(
-      author = "",
-      description = "",
-      expiryDate = null,
-      nowDate = null
-    )
-  }
-
   companion object {
     const val ENV_IS_DEVELOP_KEY = "ENV_IS_DEVELOP_KEY"
   }
