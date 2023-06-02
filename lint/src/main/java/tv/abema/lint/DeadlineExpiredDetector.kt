@@ -31,6 +31,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     return type == AnnotationUsageType.DEFINITION || super.isApplicableAnnotationUsage(type)
   }
 
+  @Suppress("NewApi")
   override fun visitAnnotationUsage(
     context: JavaContext,
     element: UElement,
