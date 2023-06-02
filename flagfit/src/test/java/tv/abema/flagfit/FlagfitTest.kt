@@ -14,7 +14,6 @@ import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
 import tv.abema.flagfit.annotation.ReleaseWith
 import tv.abema.flagfit.annotation.VariationFlag
-import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction1
 import kotlin.reflect.KSuspendFunction1
@@ -440,7 +439,8 @@ class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
     return FlagMetadata(
       author = "",
       description = "",
-      expiryDate = LocalDate.now()
+      expiryDate = null,
+      nowDate = null
     )
   }
 
