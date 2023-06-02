@@ -41,23 +41,37 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val annotationAttributes = annotationInfo.annotation.attributeValues
     if (annotationAttributes.size == 2) return
     val expiryDateString = annotationAttributes[2].evaluate().toString()
+    val currentLocalDate = if (annotationAttributes.size == 4) {
+      LocalDate.parse(
+        annotationAttributes[3].evaluate().toString(),
+        DateTimeFormatter.ISO_LOCAL_DATE
+      )
+    } else {
+      LocalDate.now()
+    }
     val expiryLocalDate = LocalDate.parse(expiryDateString, DateTimeFormatter.ISO_LOCAL_DATE)
-    val currentLocalDate = LocalDate.now()
-    if (currentLocalDate.isAfter(expiryLocalDate)) {
+    val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
+    if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
-      val message = "Your @FlagType.$name has expired!\n" +
-        "Please consider deleting @FlagType.$name"
       val location = context.getLocation(element)
-      context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
+      if (currentLocalDate.isAfter(expiryLocalDate)) {
+        val message = "Your @FlagType.$name has expired!\n" +
+          "Please consider deleting @FlagType.$name"
+        context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
+      } else {
+        val message = "Your @FlagType.$name will expire soon!\n" +
+          "Please consider deleting @FlagType.$name"
+        context.report(ISSUE_DEADLINE_SOON, element, location, message)
+      }
     }
   }
 
   companion object {
     val ISSUE_DEADLINE_EXPIRED = Issue.create(
       id = "DeadlineExpired",
-      briefDescription = "Ops annotation's date is in the past",
+      briefDescription = "FlagType annotation's date is in the past!",
       explanation = "The date provided in @FlagType annotation has already passed...",
-      category = Category.CORRECTNESS,
+      category = Category.PRODUCTIVITY,
       priority = 6,
       severity = Severity.WARNING,
       implementation = Implementation(
@@ -65,6 +79,17 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     )
-    val issue = ISSUE_DEADLINE_EXPIRED
+    val ISSUE_DEADLINE_SOON = Issue.create(
+      id = "DeadlineSoon",
+      briefDescription = "FlagType annotations will expire soon!",
+      explanation = "The one annotated with @FlagType will expire in less than a week...",
+      category = Category.PRODUCTIVITY,
+      priority = 2,
+      severity = Severity.WARNING,
+      implementation = Implementation(
+        DeadlineExpiredDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
   }
 }

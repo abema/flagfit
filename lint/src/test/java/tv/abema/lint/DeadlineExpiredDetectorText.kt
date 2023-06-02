@@ -9,6 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
+import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
 
 @RunWith(JUnit4::class)
 class DeadlineExpiredDetectorText : LintDetectorTest() {
@@ -37,6 +38,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           val author: String,
           val description: String,
           val expiryDate: String,
+          val nowDate: String
         )
       }
       """.trimIndent()
@@ -54,7 +56,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-          
+
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -63,7 +65,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
-                expiryDate = "2022-12-30"
+                expiryDate = "2023-06-01"
               )
               fun awesomeWipFeatureEnabled(): Boolean
           }
@@ -85,7 +87,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   }
 
   @Test
-  fun testFlagTypeExperimentNoExpiryWarning() {
+  fun testFlagTypeExperimentSoonExpiryWarning() {
     lint()
       .files(
         stabBooleanFlag,
@@ -104,7 +106,50 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
-                expiryDate = "3022-12-30"
+                expiryDate = "2023-06-05",
+                nowDate = "2023-06-04",
+              )
+              fun awesomeWipFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expect(
+        """
+        src/foo/Example.kt:10: Warning: Your @FlagType.Experiment will expire soon!
+        Please consider deleting @FlagType.Experiment [DeadlineSoon]
+            @FlagType.Experiment(
+            ^
+        0 errors, 1 warnings
+        """.trimIndent()
+      )
+  }
+
+  @Test
+  fun testFlagTypeExperimentNoExpiryWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Experiment(
+                author = "Hoge Fuga",
+                description = "hogehoge",
+                expiryDate = "2023-10-04",
+                nowDate = "2023-06-04",
               )
               fun awesomeWipFeatureEnabled(): Boolean
           }
@@ -125,7 +170,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
         kotlin(
           """
           package tv.abema.flagfit
-    
+
           class FlagType {
             annotation class Ops(
               val author: String,
@@ -140,7 +185,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-          
+
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -165,7 +210,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
-      ISSUE_DEADLINE_EXPIRED
+      ISSUE_DEADLINE_EXPIRED,
+      ISSUE_DEADLINE_SOON
     )
   }
 }

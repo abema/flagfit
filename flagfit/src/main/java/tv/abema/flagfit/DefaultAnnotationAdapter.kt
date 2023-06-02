@@ -1,7 +1,6 @@
 package tv.abema.flagfit
 
 import tv.abema.flagfit.annotation.DefaultWith
-import java.time.LocalDate
 import kotlin.reflect.KClass
 
 class DefaultAnnotationAdapter : AnnotationAdapter<DefaultWith> {
@@ -24,7 +23,8 @@ class DefaultAnnotationAdapter : AnnotationAdapter<DefaultWith> {
     return FlagMetadata(
       author = "",
       description = "",
-      expiryDate = LocalDate.now()
+      expiryDate = null,
+      nowDate = null
     )
   }
 }

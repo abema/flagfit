@@ -13,6 +13,7 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
+    val nowDate: String = "",
   )
 
   /**
@@ -24,6 +25,7 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
+    val nowDate: String = "",
   )
 
   /**
@@ -35,6 +37,7 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String = "",
+    val nowDate: String = "",
   )
 
   /**
@@ -46,6 +49,7 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
+    val nowDate: String = "",
   )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
@@ -68,7 +72,8 @@ class FlagType {
       return FlagMetadata(
         author = annotation.author,
         description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate()
+        expiryDate = annotation.expiryDate.toLocalDate(),
+        nowDate = annotation.nowDate.toLocalDate()
       )
     }
   }
@@ -93,7 +98,9 @@ class FlagType {
       return FlagMetadata(
         author = annotation.author,
         description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate()
+        expiryDate = annotation.expiryDate.toLocalDate(),
+        nowDate = annotation.nowDate.toLocalDate()
+
       )
     }
   }
@@ -118,7 +125,8 @@ class FlagType {
       return FlagMetadata(
         author = annotation.author,
         description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate()
+        expiryDate = annotation.expiryDate.toLocalDate(),
+        nowDate = annotation.nowDate.toLocalDate()
       )
     }
   }
@@ -143,7 +151,8 @@ class FlagType {
       return FlagMetadata(
         author = annotation.author,
         description = annotation.description,
-        expiryDate = annotation.expiryDate.toLocalDate()
+        expiryDate = annotation.expiryDate.toLocalDate(),
+        nowDate = annotation.nowDate.toLocalDate()
       )
     }
   }
