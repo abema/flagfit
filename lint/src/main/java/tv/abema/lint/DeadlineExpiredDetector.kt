@@ -39,6 +39,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     usageInfo: AnnotationUsageInfo,
   ) {
     val annotationAttributes = annotationInfo.annotation.attributeValues
+    val author = annotationAttributes[0].evaluate().toString()
     if (annotationAttributes.size == 2) return
     val expiryDateString = annotationAttributes[2].evaluate().toString()
     val currentLocalDate = if (annotationAttributes.size == 4) {
@@ -55,12 +56,12 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
       val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
-        val message = "Your @FlagType.$name has expired!\n" +
-          "Please consider deleting @FlagType.$name"
+        val message = "The @FlagType.$name created by $author has expired!\n" +
+          "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDateString."
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
-        val message = "Your @FlagType.$name will expire soon!\n" +
-          "Please consider deleting @FlagType.$name"
+        val message = "The @FlagType.$name $author will expire soon!\n" +
+          "Please consider deleting @FlagType.$name as the expiry date of $expiryDateString is scheduled to pass within a week."
         context.report(ISSUE_DEADLINE_SOON, element, location, message)
       }
     }

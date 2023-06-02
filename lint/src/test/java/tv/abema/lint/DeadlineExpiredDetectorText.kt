@@ -77,8 +77,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: Your @FlagType.Experiment has expired!
-        Please consider deleting @FlagType.Experiment [DeadlineExpired]
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by Hoge Fuga has expired!
+        Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01. [DeadlineExpired]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
@@ -119,8 +119,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: Your @FlagType.Experiment will expire soon!
-        Please consider deleting @FlagType.Experiment [DeadlineSoon]
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment Hoge Fuga will expire soon!
+        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-05 is scheduled to pass within a week. [DeadlineSoon]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
