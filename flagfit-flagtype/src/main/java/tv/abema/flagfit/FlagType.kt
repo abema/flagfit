@@ -12,7 +12,6 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
-    val nowDate: String = "",
   )
 
   /**
@@ -24,7 +23,6 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
-    val nowDate: String = "",
   )
 
   /**
@@ -36,7 +34,6 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String = "",
-    val nowDate: String = "",
   )
 
   /**
@@ -48,7 +45,6 @@ class FlagType {
     val author: String,
     val description: String,
     val expiryDate: String,
-    val nowDate: String = "",
   )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {

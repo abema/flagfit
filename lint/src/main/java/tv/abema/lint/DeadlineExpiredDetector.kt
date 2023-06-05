@@ -41,6 +41,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     usageInfo: AnnotationUsageInfo,
   ) {
     val timeZoneId = TIME_ZONE.getValue(context)
+    val currentTime = CURRENT_TIME.getValue(context)
     val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE.apply {
       if (timeZoneId.isNullOrEmpty()) {
         withZone(ZoneId.systemDefault())
@@ -52,13 +53,10 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val author = annotationAttributes[0].evaluate().toString()
     if (annotationAttributes.size == 2) return
     val expiryDateString = annotationAttributes[2].evaluate().toString()
-    val currentLocalDate = if (annotationAttributes.size == 4) {
-      LocalDate.parse(
-        annotationAttributes[3].evaluate().toString(),
-        dateTimeFormatter
-      )
-    } else {
+    val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
+    } else {
+      LocalDate.parse(currentTime, dateTimeFormatter)
     }
     val expiryLocalDate = LocalDate.parse(expiryDateString, dateTimeFormatter)
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
@@ -79,6 +77,10 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
 
   companion object {
     val TIME_ZONE = StringOption("timeZone", "Your current time zone")
+    val CURRENT_TIME = StringOption(
+      "currentTime",
+      "It's your time now, but this option is only for testing purposes."
+    )
     val ISSUE_DEADLINE_EXPIRED = Issue.create(
       id = "FlagfitDeadlineExpired",
       briefDescription = "FlagType annotation's date is in the past!",
@@ -90,7 +92,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         DeadlineExpiredDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
-    ).setOptions(listOf(TIME_ZONE))
+    ).setOptions(listOf(TIME_ZONE, CURRENT_TIME))
     val ISSUE_DEADLINE_SOON = Issue.create(
       id = "FlagfitDeadlineSoon",
       briefDescription = "FlagType annotations will expire soon!",
@@ -102,6 +104,6 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         DeadlineExpiredDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
-    ).setOptions(listOf(TIME_ZONE))
+    ).setOptions(listOf(TIME_ZONE, CURRENT_TIME))
   }
 }

@@ -8,6 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import tv.abema.lint.DeadlineExpiredDetector.Companion.CURRENT_TIME
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
 import tv.abema.lint.DeadlineExpiredDetector.Companion.TIME_ZONE
@@ -39,7 +40,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           val author: String,
           val description: String,
           val expiryDate: String,
-          val nowDate: String
         )
       }
       """.trimIndent()
@@ -76,6 +76,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
       .configureOption(TIME_ZONE, "Asia/Tokyo")
+      .configureOption(CURRENT_TIME, "2023-06-02")
       .run()
       .expect(
         """
@@ -108,8 +109,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
-                expiryDate = "2023-06-05",
-                nowDate = "2023-06-04",
+                expiryDate = "2023-06-01",
               )
               fun awesomeWipFeatureEnabled(): Boolean
           }
@@ -119,11 +119,12 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
       .configureOption(TIME_ZONE, "Asia/Tokyo")
+      .configureOption(CURRENT_TIME, "2023-05-26")
       .run()
       .expect(
         """
         src/foo/Example.kt:10: Warning: The @FlagType.Experiment Hoge Fuga will expire soon!
-        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-05 is scheduled to pass within a week. [FlagfitDeadlineSoon]
+        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week. [FlagfitDeadlineSoon]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
@@ -151,8 +152,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               @FlagType.Experiment(
                 author = "Hoge Fuga",
                 description = "hogehoge",
-                expiryDate = "2023-10-04",
-                nowDate = "2023-06-04",
+                expiryDate = "2023-06-01",
               )
               fun awesomeWipFeatureEnabled(): Boolean
           }
@@ -162,6 +162,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
       .configureOption(TIME_ZONE, "Asia/Tokyo")
+      .configureOption(CURRENT_TIME, "2023-05-25")
       .run()
       .expectClean()
   }
