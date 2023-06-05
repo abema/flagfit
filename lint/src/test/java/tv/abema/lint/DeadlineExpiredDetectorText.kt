@@ -68,7 +68,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 description = "hogehoge",
                 expiryDate = "2023-06-01"
               )
-              fun awesomeWipFeatureEnabled(): Boolean
+              fun awesomeExperimentFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
@@ -111,7 +111,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
-              fun awesomeWipFeatureEnabled(): Boolean
+              fun awesomeExperimentFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
@@ -154,7 +154,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
-              fun awesomeWipFeatureEnabled(): Boolean
+              fun awesomeExperimentFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
@@ -200,7 +200,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 author = "Hoge Fuga",
                 description = "hogehoge"
               )
-              fun awesomeWipFeatureEnabled(): Boolean
+              fun awesomeOpsFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
