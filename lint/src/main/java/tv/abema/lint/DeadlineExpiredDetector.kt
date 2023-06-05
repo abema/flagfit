@@ -71,7 +71,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
 
   companion object {
     val ISSUE_DEADLINE_EXPIRED = Issue.create(
-      id = "DeadlineExpired",
+      id = "FlagfitDeadlineExpired",
       briefDescription = "FlagType annotation's date is in the past!",
       explanation = "The date provided in @FlagType annotation has already passed...",
       category = Category.PRODUCTIVITY,
@@ -83,7 +83,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       )
     )
     val ISSUE_DEADLINE_SOON = Issue.create(
-      id = "DeadlineSoon",
+      id = "FlagfitDeadlineSoon",
       briefDescription = "FlagType annotations will expire soon!",
       explanation = "The one annotated with @FlagType will expire in less than a week...",
       category = Category.PRODUCTIVITY,
