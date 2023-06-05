@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
+import tv.abema.lint.DeadlineExpiredDetector.Companion.TIME_ZONE
 
 @RunWith(JUnit4::class)
 class DeadlineExpiredDetectorText : LintDetectorTest() {
@@ -74,6 +75,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       )
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
+      .configureOption(TIME_ZONE, "Asia/Tokyo")
       .run()
       .expect(
         """
@@ -116,6 +118,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       )
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
+      .configureOption(TIME_ZONE, "Asia/Tokyo")
       .run()
       .expect(
         """
@@ -158,6 +161,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       )
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
+      .configureOption(TIME_ZONE, "Asia/Tokyo")
       .run()
       .expectClean()
   }

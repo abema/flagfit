@@ -11,6 +11,7 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.uast.UElement
 import java.time.LocalDate
 import java.time.ZoneId
@@ -39,7 +40,14 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     annotationInfo: AnnotationInfo,
     usageInfo: AnnotationUsageInfo,
   ) {
-    val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE.withZone(ZoneId.of("Asia/Tokyo"))
+    val timeZoneId = TIME_ZONE.getValue(context)
+    val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE.apply {
+      if (timeZoneId.isNullOrEmpty()) {
+        withZone(ZoneId.systemDefault())
+      } else {
+        withZone(ZoneId.of(timeZoneId))
+      }
+    }
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val author = annotationAttributes[0].evaluate().toString()
     if (annotationAttributes.size == 2) return
@@ -70,6 +78,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
   }
 
   companion object {
+    val TIME_ZONE = StringOption("timeZone", "Your current time zone")
     val ISSUE_DEADLINE_EXPIRED = Issue.create(
       id = "FlagfitDeadlineExpired",
       briefDescription = "FlagType annotation's date is in the past!",
@@ -81,7 +90,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         DeadlineExpiredDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
-    )
+    ).setOptions(listOf(TIME_ZONE))
     val ISSUE_DEADLINE_SOON = Issue.create(
       id = "FlagfitDeadlineSoon",
       briefDescription = "FlagType annotations will expire soon!",
@@ -93,6 +102,6 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         DeadlineExpiredDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
-    )
+    ).setOptions(listOf(TIME_ZONE))
   }
 }

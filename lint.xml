@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+  <!--  If you want to manage ZoneId on a per-project basis, change the time zone to match your team's time zone-->
+  <!--  https://docs.oracle.com/javase/jp/8/docs/api/java/time/ZoneId.html-->
+  <issue id="FlagfitDeadlineExpired">
+    <option name="timeZone" value="Asia/Tokyo" />
+  </issue>
+  <issue id="FlagfitDeadlineSoon">
+    <option name="timeZone" value="Asia/Tokyo" />
+  </issue>
+</lint>
