@@ -13,7 +13,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.WorkInProgress(
-    author = "Hoge Fuga",
+    author = "momomomo111",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
@@ -45,7 +45,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Permission(
-    author = "Hoge Fuga",
+    author = "momomomo111",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
