@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 class DebugAnnotationAdapter : AnnotationAdapter<DebugWith> {
   override fun canHandle(
     annotation: DebugWith,
-    env: Map<String, Any>
+    env: Map<String, Any>,
   ): Boolean {
     return env[Flagfit.ENV_IS_DEBUG_KEY] == true
   }

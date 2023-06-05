@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 class ReleaseAnnotationAdapter : AnnotationAdapter<ReleaseWith> {
   override fun canHandle(
     annotation: ReleaseWith,
-    env: Map<String, Any>
+    env: Map<String, Any>,
   ): Boolean {
     return env[Flagfit.ENV_IS_DEBUG_KEY] == false
   }

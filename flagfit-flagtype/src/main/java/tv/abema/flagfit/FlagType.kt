@@ -8,33 +8,49 @@ class FlagType {
    *
    * [Release Toggles](https://martinfowler.com/articles/feature-toggles.html#ReleaseToggles)
    */
-  annotation class WorkInProgress
+  annotation class WorkInProgress(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   /**
    * > Experiment Toggles are used to perform multivariate or A/B testing.
    *
    * [Experiment Toggles](https://martinfowler.com/articles/feature-toggles.html#ExperimentToggles)
    */
-  annotation class Experiment
+  annotation class Experiment(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   /**
    * > These flags are used to control operational aspects of our system's behavior.
    *
    * [Ops Toggles](https://martinfowler.com/articles/feature-toggles.html#OpsToggles)
    */
-  annotation class Ops
+  annotation class Ops(
+    val author: String,
+    val description: String,
+    val expiryDate: String = "",
+  )
 
   /**
    * > These flags are used to change the features or product experience that certain users receive.
    *
    * [Permissioning Toggles](https://martinfowler.com/articles/feature-toggles.html#PermissioningToggles)
    */
-  annotation class Permission
+  annotation class Permission(
+    val author: String,
+    val description: String,
+    val expiryDate: String,
+  )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
     override fun canHandle(
       annotation: WorkInProgress,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -51,7 +67,7 @@ class FlagType {
   class OpsAnnotationAdapter : AnnotationAdapter<Ops> {
     override fun canHandle(
       annotation: Ops,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -68,7 +84,7 @@ class FlagType {
   class ExperimentAnnotationAdapter : AnnotationAdapter<Experiment> {
     override fun canHandle(
       annotation: Experiment,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }
@@ -85,7 +101,7 @@ class FlagType {
   class PermissionAnnotationAdapter : AnnotationAdapter<Permission> {
     override fun canHandle(
       annotation: Permission,
-      env: Map<String, Any>
+      env: Map<String, Any>,
     ): Boolean {
       return true
     }

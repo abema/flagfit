@@ -27,7 +27,7 @@ class FlagfitTest {
       val function: KFunction1<BlockingService, Boolean>,
       val env: Map<String, Any>,
       val customAnnotationAdapters: List<AnnotationAdapter<out Annotation>> = listOf(),
-      val expected: Boolean
+      val expected: Boolean,
     )
 
     companion object {
@@ -113,9 +113,11 @@ class FlagfitTest {
         flagSources = listOf(param.booleanFlagSource, JustFlagSource.StringSource("C")),
         baseEnv = param.env,
         variationAdapters = listOf(ABC),
-        annotationAdapters = listOf(DevelopAnnotationAdapter(),
+        annotationAdapters = listOf(
+          DevelopAnnotationAdapter(),
           ReleaseAnnotationAdapter(),
-          DebugAnnotationAdapter()) + param.customAnnotationAdapters
+          DebugAnnotationAdapter()
+        ) + param.customAnnotationAdapters
       )
       val service = flagfit.create(BlockingService::class)
 
@@ -136,7 +138,7 @@ class FlagfitTest {
       val function: KFunction1<BlockingService, T>,
       val env: Map<String, Any>,
       val customAnnotationAdapters: List<AnnotationAdapter<out Annotation>> = listOf(),
-      val expected: T
+      val expected: T,
     )
 
     companion object {
@@ -171,9 +173,11 @@ class FlagfitTest {
         flagSources = listOf(param.stringFlagSource, shouldNotCalledRemoteBlockingSource),
         baseEnv = param.env,
         variationAdapters = listOf(ABC),
-        annotationAdapters = listOf(DevelopAnnotationAdapter(),
+        annotationAdapters = listOf(
+          DevelopAnnotationAdapter(),
           ReleaseAnnotationAdapter(),
-          DebugAnnotationAdapter()) + param.customAnnotationAdapters
+          DebugAnnotationAdapter()
+        ) + param.customAnnotationAdapters
       )
       val service = flagfit.create(BlockingService::class)
 
@@ -194,7 +198,7 @@ class FlagfitTest {
       val function: KSuspendFunction1<SuspendableService, Boolean>,
       val env: Map<String, Any>,
       val customAnnotationAdapters: List<AnnotationAdapter<out Annotation>> = listOf(),
-      val expected: Boolean
+      val expected: Boolean,
     )
 
     companion object {
@@ -205,7 +209,7 @@ class FlagfitTest {
           Param(
             booleanFlagSource = object : RemoteSuspendableBooleanFlagSource {
               override suspend fun fetch(
-                key: String, defaultValue: Boolean, env: Map<String, Any>
+                key: String, defaultValue: Boolean, env: Map<String, Any>,
               ): Boolean {
                 error("should not be called")
               }
@@ -221,7 +225,7 @@ class FlagfitTest {
           Param(
             booleanFlagSource = object : RemoteSuspendableBooleanFlagSource {
               override suspend fun fetch(
-                key: String, defaultValue: Boolean, env: Map<String, Any>
+                key: String, defaultValue: Boolean, env: Map<String, Any>,
               ): Boolean {
                 // for testing coroutines work
                 delay(1)
@@ -239,7 +243,7 @@ class FlagfitTest {
           Param(
             booleanFlagSource = object : RemoteSuspendableBooleanFlagSource {
               override suspend fun fetch(
-                key: String, defaultValue: Boolean, env: Map<String, Any>
+                key: String, defaultValue: Boolean, env: Map<String, Any>,
               ): Boolean {
                 // for testing not coroutines work
                 return true
@@ -262,7 +266,7 @@ class FlagfitTest {
       runBlocking {
         val shouldNotUsedFlagSource = object : SuspendableStringFlagSource {
           override suspend fun fetch(
-            key: String, defaultValue: String, env: Map<String, Any>
+            key: String, defaultValue: String, env: Map<String, Any>,
           ): String {
             throw AssertionError("Should not used this flag soruce")
           }
@@ -271,9 +275,11 @@ class FlagfitTest {
           flagSources = listOf(param.booleanFlagSource, shouldNotUsedFlagSource),
           baseEnv = param.env,
           variationAdapters = listOf(ABC),
-          annotationAdapters = listOf(DevelopAnnotationAdapter(),
+          annotationAdapters = listOf(
+            DevelopAnnotationAdapter(),
             ReleaseAnnotationAdapter(),
-            DebugAnnotationAdapter()) + param.customAnnotationAdapters
+            DebugAnnotationAdapter()
+          ) + param.customAnnotationAdapters
         )
         val service = flagfit.create(SuspendableService::class)
 
@@ -295,7 +301,7 @@ class FlagfitTest {
       val function: KSuspendFunction1<SuspendableService, ABC>,
       val env: Map<String, Any>,
       val customAnnotationAdapters: List<AnnotationAdapter<out Annotation>> = listOf(),
-      val expected: T
+      val expected: T,
     )
 
     companion object {
@@ -323,7 +329,7 @@ class FlagfitTest {
     fun test() {
       val shouldNotCalledRemoteSuspendableSource = object : RemoteSuspendableBooleanFlagSource {
         override suspend fun fetch(
-          key: String, defaultValue: Boolean, env: Map<String, Any>
+          key: String, defaultValue: Boolean, env: Map<String, Any>,
         ): Boolean {
           error("should not be called")
         }
@@ -333,9 +339,11 @@ class FlagfitTest {
           flagSources = listOf(param.stringFlagSource, shouldNotCalledRemoteSuspendableSource),
           baseEnv = param.env,
           variationAdapters = listOf(ABC),
-          annotationAdapters = listOf(DevelopAnnotationAdapter(),
+          annotationAdapters = listOf(
+            DevelopAnnotationAdapter(),
             ReleaseAnnotationAdapter(),
-            DebugAnnotationAdapter()) + param.customAnnotationAdapters
+            DebugAnnotationAdapter()
+          ) + param.customAnnotationAdapters
         )
         val service = flagfit.create(SuspendableService::class)
 
@@ -408,13 +416,13 @@ interface SuspendableService {
 }
 
 annotation class DevelopWith(
-  val flagSourceClass: KClass<out FlagSource>
+  val flagSourceClass: KClass<out FlagSource>,
 )
 
 class DevelopAnnotationAdapter : AnnotationAdapter<DevelopWith> {
   override fun canHandle(
     annotation: DevelopWith,
-    env: Map<String, Any>
+    env: Map<String, Any>,
   ): Boolean {
     return env[ENV_IS_DEVELOP_KEY] == true
   }
