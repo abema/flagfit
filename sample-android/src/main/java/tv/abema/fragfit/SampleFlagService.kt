@@ -15,7 +15,7 @@ interface SampleFlagService {
   @FlagType.WorkInProgress(
     author = "momomomo111",
     description = "hogehoge",
-    expiryDate = "2022-12-30"
+    expiryDate = "2023-06-13"
   )
   fun awesomeWipFeatureEnabled(): Boolean
 
