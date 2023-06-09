@@ -1,8 +1,10 @@
 name: Create Issues from SARIF
-#on:
+
+on:
+  workflow_dispatch:
 #  schedule:
-#    - cron: '0 0 * * 1' # 毎週月曜日に実行
-on: [ push ]
+#    - cron: '0 0 * * 1' # Runs every Monday
+
 jobs:
   create_issues:
     runs-on: ubuntu-latest
