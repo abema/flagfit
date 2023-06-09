@@ -5,7 +5,6 @@
 import org.json.JSONObject
 import org.kohsuke.github.GHIssue
 import org.kohsuke.github.GHIssueState
-import org.kohsuke.github.GHRepository
 import org.kohsuke.github.GitHub
 import java.io.File
 import java.util.regex.Pattern
@@ -18,10 +17,6 @@ class FlagExpirationIssueMaintainer {
     val headSha = System.getenv("HEAD_SHA")
     val gitHub = GitHub.connectUsingOAuth(githubToken)
     val repo = gitHub.getRepository(repoName)
-    createIssue(repo, headSha)
-  }
-
-  private fun createIssue(repo: GHRepository, headSha: String?) {
     val targetRuleIdList = listOf(FLAGFIT_DEADLINE_SOON, FLAGFIT_DEADLINE_EXPIRED)
     val file = File("./lint-results.sarif")
     val content = file.readText()
