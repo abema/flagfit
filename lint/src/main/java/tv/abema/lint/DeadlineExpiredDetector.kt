@@ -13,6 +13,7 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.kotlin.KotlinUMethod
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -33,7 +34,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     return type == AnnotationUsageType.DEFINITION || super.isApplicableAnnotationUsage(type)
   }
 
-  @Suppress("NewApi")
+  @Suppress("NewApi", "UnstableApiUsage")
   override fun visitAnnotationUsage(
     context: JavaContext,
     element: UElement,
@@ -50,26 +51,35 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       }
     }
     val annotationAttributes = annotationInfo.annotation.attributeValues
-    val author = annotationAttributes[0].evaluate().toString()
     if (annotationAttributes.size == 2) return
-    val expiryDateString = annotationAttributes[2].evaluate().toString()
+    val author = annotationAttributes[0].evaluate().toString()
+    val expiryDate = annotationAttributes[2].evaluate().toString()
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
       LocalDate.parse(currentTime, dateTimeFormatter)
     }
-    val expiryLocalDate = LocalDate.parse(expiryDateString, dateTimeFormatter)
+    val expiryLocalDate = LocalDate.parse(expiryDate, dateTimeFormatter)
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
+    val uastParent = (element.uastParent as? KotlinUMethod) ?: return
+    val methodName = uastParent.name
+    val key = uastParent.annotations
+      .first { it.qualifiedName == "tv.abema.flagfit.annotation.BooleanFlag" }
+      .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
       val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
-        val message = "The @FlagType.$name created by $author has expired!\n" +
-          "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDateString."
+        val message = "The @FlagType.$name created by <author: $author> has expired!\n" +
+          "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDate.\n" +
+          "The flag of <key: ${key}> is used in the $methodName function.\n"
+
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
-        val message = "The @FlagType.$name $author will expire soon!\n" +
-          "Please consider deleting @FlagType.$name as the expiry date of $expiryDateString is scheduled to pass within a week."
+        val message = "The @FlagType.$name <author: $author> will expire soon!\n" +
+          "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week." +
+          "The flag of <key: ${key}> is used in the $methodName function.\n"
+
         context.report(ISSUE_DEADLINE_SOON, element, location, message)
       }
     }
