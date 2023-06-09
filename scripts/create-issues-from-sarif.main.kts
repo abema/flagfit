@@ -10,9 +10,9 @@ import org.kohsuke.github.GitHub
 import java.io.File
 import java.util.regex.Pattern
 
-class Issue {
+class FlagExpirationIssueMaintainer {
 
-  fun main() {
+  fun maintain() {
     val githubToken = System.getenv("GITHUB_TOKEN")
     val repoName = System.getenv("GITHUB_REPOSITORY")
     val headSha = System.getenv("HEAD_SHA")
@@ -109,4 +109,4 @@ class Issue {
   }
 }
 
-Issue().main()
+FlagExpirationIssueMaintainer().maintain()
