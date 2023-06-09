@@ -40,10 +40,10 @@ class Issue {
       val result = results.getJSONObject(i)
       val ruleId = result.getString("ruleId")
       if (ruleId in targetRuleIdList) {
-        val message = result.getJSONObject("message").getString("text")
+        val message = result.getJSONObject("message").getString("markdown")
 
-        val keyPatternRegex = "<key: (.*?)>"
-        val authorPatternRegex = "<author: (.*?)>"
+        val keyPatternRegex = "`key: (.*?)`"
+        val authorPatternRegex = "`author: (.*?)`"
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = authorPatternRegex)
 
