@@ -281,14 +281,20 @@ As we develop, we use Release Toggles, Experiment Toggles, and Opts Toggles for 
 We develop by switching these flags.  
   
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
-If the flag using this `@ToggleType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
+If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
+
+When using FlagType, please set `author`, `description` and `expiryDate`. In this way, any Flag that has passed its expiration date will be automatically created as an Issue with an assigned author from the workflow. [Please see this file](https://github.com/abema/flagfit/blob/create-issue-automation/.github/workflows/lintIssues.yml)
 
 ```kotlin
 @BooleanFlag(
   key = "awesome-feature",
   defaultValue = false
 )
-@ToggleType.WorkInProgress
+@FlagType.WorkInProgress(
+  author = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!",
+  expiryDate = "2023-06-13"
+)
 fun awesomeFeatureEnabled(): Boolean
 ```
 
@@ -300,12 +306,30 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
   key = "awesome-feature",
   defaultValue = false
 )
-@FlagType.Experiment
+@FlagType.Experiment(
+  author = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!",
+  expiryDate = "2023-06-13"
+)
 fun awesomeFeatureEnabled(): Boolean
 ```
 
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
 If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
+
+Since `@FlagType.Ops` may be operated indefinitely, there is no need to set `expiryDate`.
+
+```kotlin
+@BooleanFlag(
+  key = "awesome-feature",
+  defaultValue = false
+)
+@FlagType.Ops(
+  author = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!"
+)
+fun awesomeFeatureEnabled(): Boolean
+```
 
 ### Setup for default flag types
 
