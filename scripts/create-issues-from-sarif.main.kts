@@ -25,12 +25,11 @@ class FlagExpirationIssueMaintainer {
       .getJSONArray("runs")
     val results = runs.getJSONObject(0).getJSONArray("results")
     val label = "futureflag-expiration"
-    val existingIssues = repo.getIssues(GHIssueState.OPEN)
-      .filter {
-        it.labels.any { existLabel ->
-          existLabel.name == label
-        }
-      }.toMutableList()
+    val existingIssues = repo.queryIssues()
+      .label(label)
+      .state(GHIssueState.OPEN)
+      .list()
+      .toMutableList()
     for (i in 0 until results.length()) {
       val result = results.getJSONObject(i)
       val ruleId = result.getString("ruleId")
