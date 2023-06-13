@@ -25,11 +25,21 @@ class FlagExpirationIssueMaintainer {
       .getJSONArray("runs")
     val results = runs.getJSONObject(0).getJSONArray("results")
     val label = "futureflag-expiration"
+    val limitIssue = 50
     val existingIssues = repo.queryIssues()
       .label(label)
       .state(GHIssueState.OPEN)
+      .pageSize(limitIssue)
       .list()
+      .take(limitIssue)
       .toMutableList()
+    if (existingIssues.size >= limitIssue) {
+      throw IllegalStateException(
+        "Found more than $limitIssue Issues with $label set, " +
+          "please make sure it is less than ${limitIssue}!"
+      )
+    }
+
     for (i in 0 until results.length()) {
       val result = results.getJSONObject(i)
       val ruleId = result.getString("ruleId")
