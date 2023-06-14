@@ -28,4 +28,4 @@ jobs:
           HEAD_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          kotlin scripts/create-issues-from-sarif.main.kts
+          kotlin scripts/maintain-flagfit-expiration-issue.main.kts
