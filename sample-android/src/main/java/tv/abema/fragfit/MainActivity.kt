@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
           modifier = Modifier.fillMaxSize(),
           color = MaterialTheme.colorScheme.background
         ) {
-          FragfitSampleComponent(sampleFlagService)
+          FlagfitSampleComponent(sampleFlagService)
         }
       }
     }
