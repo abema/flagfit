@@ -53,20 +53,23 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     }
     val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
-    val author = annotationAttributes.firstOrNull { it.name == "author" }?.evaluate()
-    val description = annotationAttributes.firstOrNull { it.name == "description" }?.evaluate()
-    val expiryDate = annotationAttributes.firstOrNull { it.name == "expiryDate" }?.evaluate()
-    if (author == null) {
+    val author = (annotationAttributes.firstOrNull { it.name == "author" }?.evaluate() as String?)
+      ?: ""
+    val description = (annotationAttributes.firstOrNull { it.name == "description" }
+      ?.evaluate() as String?) ?: ""
+    val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
+      ?.evaluate() as String?) ?: ""
+    if (author.isEmpty()) {
       val message = "No value set for `author!\n" +
         "If you don't set a value for `author`, the author will not receive notifications when you forget to turn off the FutureFlag"
       context.report(ISSUE_NONE_AUTHOR, element, location, message)
     }
-    if (description == null) {
+    if (description.isEmpty()) {
       val message = "No value set for `description`!\n" +
         "Please add an explanation regarding flags"
       context.report(ISSUE_NONE_DESCRIPTION, element, location, message)
     }
-    if (expiryDate == null && qualifiedName != "tv.abema.flagfit.FlagType.Ops") {
+    if (expiryDate.isEmpty() && qualifiedName != "tv.abema.flagfit.FlagType.Ops") {
       val message = "No value set for `expiryDate`!\n" +
         "FutureFlag expiration date cannot be determined without setting a value for `expiryDate`"
       context.report(ISSUE_NONE_EXPIRY_DATE, element, location, message)
@@ -76,7 +79,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     } else {
       LocalDate.parse(currentTime, dateTimeFormatter)
     }
-    if (expiryDate !is String) return
+    if (expiryDate.isEmpty()) return
     val expiryLocalDate = LocalDate.parse(expiryDate, dateTimeFormatter)
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
     val uastParent = (element.uastParent as? KotlinUMethod) ?: return
