@@ -11,6 +11,9 @@ import org.junit.runners.JUnit4
 import tv.abema.lint.DeadlineExpiredDetector.Companion.CURRENT_TIME
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
 import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
+import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_NONE_AUTHOR
+import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_NONE_DESCRIPTION
+import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_NONE_EXPIRY_DATE
 import tv.abema.lint.DeadlineExpiredDetector.Companion.TIME_ZONE
 
 @RunWith(JUnit4::class)
@@ -214,12 +217,60 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .expectClean()
   }
 
+  @Test
+  fun testFlagTypeNoParameterWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Experiment
+              fun awesomeExperimentFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expect(
+        """
+        src/foo/Example.kt:10: Warning: No value set for author!
+        If you don't set a value for author, the author will not receive notifications when you forget to turn off the FutureFlag [FlagfitNoneAuthor]
+            @FlagType.Experiment
+            ~~~~~~~~~~~~~~~~~~~~
+        src/foo/Example.kt:10: Warning: No value set for description!
+        Please add an explanation regarding flags [FlagfitNoneDescription]
+            @FlagType.Experiment
+            ~~~~~~~~~~~~~~~~~~~~
+        src/foo/Example.kt:10: Warning: No value set for expiryDate!
+        FutureFlag expiration date cannot be determined without setting a value for expiryDate [FlagfitNoneExpiryDate]
+            @FlagType.Experiment
+            ~~~~~~~~~~~~~~~~~~~~
+        0 errors, 3 warnings
+        """.trimIndent()
+      )
+  }
+
   override fun getDetector(): Detector = DeadlineExpiredDetector()
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
       ISSUE_DEADLINE_EXPIRED,
-      ISSUE_DEADLINE_SOON
+      ISSUE_DEADLINE_SOON,
+      ISSUE_NONE_AUTHOR,
+      ISSUE_NONE_DESCRIPTION,
+      ISSUE_NONE_EXPIRY_DATE
     )
   }
 }
