@@ -22,6 +22,9 @@ internal class IssueRegistry : IssueRegistry() {
   override val issues: List<Issue>
     get() = listOf(
       DeadlineExpiredDetector.ISSUE_DEADLINE_EXPIRED,
-      DeadlineExpiredDetector.ISSUE_DEADLINE_SOON
+      DeadlineExpiredDetector.ISSUE_DEADLINE_SOON,
+      DeadlineExpiredDetector.ISSUE_NONE_AUTHOR,
+      DeadlineExpiredDetector.ISSUE_NONE_DESCRIPTION,
+      DeadlineExpiredDetector.ISSUE_NONE_EXPIRY_DATE
     )
 }

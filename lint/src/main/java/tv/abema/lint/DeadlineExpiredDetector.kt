@@ -41,6 +41,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     annotationInfo: AnnotationInfo,
     usageInfo: AnnotationUsageInfo,
   ) {
+    val location = context.getLocation(element)
     val timeZoneId = TIME_ZONE.getValue(context)
     val currentTime = CURRENT_TIME.getValue(context)
     val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE.apply {
@@ -50,15 +51,32 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         withZone(ZoneId.of(timeZoneId))
       }
     }
+    val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
-    if (annotationAttributes.size == 2) return
-    val author = annotationAttributes.first { it.name == "author" }.evaluate().toString()
-    val expiryDate = annotationAttributes.first { it.name == "expiryDate" }.evaluate().toString()
+    val author = annotationAttributes.firstOrNull { it.name == "author" }?.evaluate()
+    val description = annotationAttributes.firstOrNull { it.name == "description" }?.evaluate()
+    val expiryDate = annotationAttributes.firstOrNull { it.name == "expiryDate" }?.evaluate()
+    if (author == null) {
+      val message = "No value set for `author!\n" +
+        "If you don't set a value for `author`, the author will not receive notifications when you forget to turn off the FutureFlag"
+      context.report(ISSUE_NONE_AUTHOR, element, location, message)
+    }
+    if (description == null) {
+      val message = "No value set for `description`!\n" +
+        "Please add an explanation regarding flags"
+      context.report(ISSUE_NONE_DESCRIPTION, element, location, message)
+    }
+    if (expiryDate == null && qualifiedName != "tv.abema.flagfit.FlagType.Ops") {
+      val message = "No value set for `expiryDate`!\n" +
+        "FutureFlag expiration date cannot be determined without setting a value for `expiryDate`"
+      context.report(ISSUE_NONE_EXPIRY_DATE, element, location, message)
+    }
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
       LocalDate.parse(currentTime, dateTimeFormatter)
     }
+    if (expiryDate !is String) return
     val expiryLocalDate = LocalDate.parse(expiryDate, dateTimeFormatter)
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
     val uastParent = (element.uastParent as? KotlinUMethod) ?: return
@@ -68,7 +86,6 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
-      val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
         val message = "The @FlagType.$name created by `author: $author` has expired!\n" +
           "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDate.\n" +
@@ -115,5 +132,41 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     ).setOptions(listOf(TIME_ZONE, CURRENT_TIME))
+    val ISSUE_NONE_AUTHOR = Issue.create(
+      id = "FlagfitNoneAuthor",
+      briefDescription = "No value set for `author`!",
+      explanation = "If you don't set a value for `author`, the author will not receive notifications when you forget to turn off the FutureFlag...",
+      category = Category.PRODUCTIVITY,
+      priority = 6,
+      severity = Severity.WARNING,
+      implementation = Implementation(
+        DeadlineExpiredDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
+    val ISSUE_NONE_DESCRIPTION = Issue.create(
+      id = "FlagfitNoneDescription",
+      briefDescription = "No value set for `description`!",
+      explanation = "Please add an explanation regarding flags...",
+      category = Category.PRODUCTIVITY,
+      priority = 6,
+      severity = Severity.WARNING,
+      implementation = Implementation(
+        DeadlineExpiredDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
+    val ISSUE_NONE_EXPIRY_DATE = Issue.create(
+      id = "FlagfitNoneExpiryDate",
+      briefDescription = "No value set for `expiryDate`!",
+      explanation = "FutureFlag expiration date cannot be determined without setting a value for `expiryDate`...",
+      category = Category.PRODUCTIVITY,
+      priority = 6,
+      severity = Severity.WARNING,
+      implementation = Implementation(
+        DeadlineExpiredDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
   }
 }
