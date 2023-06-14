@@ -1,0 +1,31 @@
+name: Create Issues from SARIF
+
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: '0 0 * * 1' # Runs every Monday
+
+jobs:
+  create_issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: lint
+        run: ./gradlew :sample-android:lintDebug
+
+      - name: Create issues from SARIF files
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          kotlin scripts/create-issues-from-sarif.main.kts

@@ -80,8 +80,10 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by Hoge Fuga has expired!
-        Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01. [FlagfitDeadlineExpired]
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
+        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
+         [FlagfitDeadlineExpired]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
@@ -123,8 +125,9 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment Hoge Fuga will expire soon!
-        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week. [FlagfitDeadlineSoon]
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment author: Hoge Fuga will expire soon!
+        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
+         [FlagfitDeadlineSoon]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
