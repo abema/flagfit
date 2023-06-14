@@ -60,7 +60,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     if (author.isEmpty()) {
-      val message = "No value set for `author!\n" +
+      val message = "No value set for `author`!\n" +
         "If you don't set a value for `author`, the author will not receive notifications when you forget to turn off the FutureFlag"
       context.report(ISSUE_NONE_AUTHOR, element, location, message)
     }
