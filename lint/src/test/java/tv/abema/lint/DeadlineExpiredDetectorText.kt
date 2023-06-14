@@ -215,6 +215,60 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   }
 
   @Test
+  fun testVariationFlagFlagTypeWarning() {
+    lint()
+      .files(
+        stabFlagType,
+        kotlin(
+          """
+          package tv.abema.flagfit.annotation
+          
+          annotation class VariationFlag(
+             val key: String,
+             val defaultValue: String
+           )
+          """.trimIndent()
+        ),
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.VariationFlag
+
+          interface Example {
+              @VariationFlag(
+                key = "new-awesome-feature",
+                defaultValue = "hoge"
+              )
+              @FlagType.Experiment(
+                author = "Hoge Fuga",
+                description = "hogehoge",
+                expiryDate = "2023-06-01",
+              )
+              fun awesomeVariationFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .configureOption(TIME_ZONE, "Asia/Tokyo")
+      .configureOption(CURRENT_TIME, "2023-06-02")
+      .run()
+      .expect(
+        """
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
+        The flag of key: "new-awesome-feature" is used in the awesomeVariationFeatureEnabled function.
+         [FlagfitDeadlineExpired]
+            @FlagType.Experiment(
+            ^
+        0 errors, 1 warnings
+        """.trimIndent()
+      )
+  }
+
+  @Test
   fun testDeprecatedFlagTypeNoWarning() {
     lint()
       .files(
