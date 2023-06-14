@@ -47,9 +47,9 @@ class FlagExpirationIssueMaintainer {
         val message = result.getJSONObject("message").getString("markdown")
 
         val keyPatternRegex = "`key: (.*?)`"
-        val authorPatternRegex = "`author: (.*?)`"
+        val ownerPatternRegex = "`owner: (.*?)`"
         val key = matchText(text = message, patternRegex = keyPatternRegex)
-        val assignee = matchText(text = message, patternRegex = authorPatternRegex)
+        val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
         val issueTitle = "$ruleId <$key>"
         val issueBody = "## Warning\n\n$message"

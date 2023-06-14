@@ -51,11 +51,11 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       }
     }
     val annotationAttributes = annotationInfo.annotation.attributeValues
-    val author = (annotationAttributes.firstOrNull { it.name == "author" }?.evaluate() as String?)
+    val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
-    if (author == "UNKNOWN_OWNER" || expiryDate == "UNKNOWN_EXPIRY_DATE") return
+    if (owner == "UNKNOWN_OWNER" || expiryDate == "UNKNOWN_EXPIRY_DATE") return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
@@ -75,13 +75,13 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
       val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
-        val message = "The @FlagType.$name created by `author: $author` has expired!\n" +
+        val message = "The @FlagType.$name created by `owner: $owner` has expired!\n" +
           "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDate.\n" +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
-        val message = "The @FlagType.$name `author: $author` will expire soon!\n" +
+        val message = "The @FlagType.$name `owner: $owner` will expire soon!\n" +
           "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week." +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 

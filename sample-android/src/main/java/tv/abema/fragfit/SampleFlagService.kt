@@ -16,7 +16,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.WorkInProgress(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
@@ -27,7 +27,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Experiment(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2322-12-30"
   )
@@ -38,7 +38,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Ops(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge"
   )
   fun awesomeOpsFeatureEnabled(): Boolean
@@ -48,7 +48,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Permission(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
@@ -59,7 +59,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.WorkInProgress(
-    author = UNKNOWN_OWNER,
+    owner = UNKNOWN_OWNER,
     description = UNKNOWN_DESCRIPTION,
     expiryDate = UNKNOWN_EXPIRY_DATE
   )

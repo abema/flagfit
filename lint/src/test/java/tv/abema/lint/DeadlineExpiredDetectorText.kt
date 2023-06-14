@@ -38,7 +38,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       
       class FlagType {
         annotation class Experiment(
-          val author: String,
+          val owner: String,
           val description: String,
           val expiryDate: String,
         )
@@ -81,7 +81,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01"
               )
@@ -97,7 +97,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
         The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
          [FlagfitDeadlineExpired]
@@ -126,7 +126,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -142,7 +142,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment author: Hoge Fuga will expire soon!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment owner: Hoge Fuga will expire soon!
         Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
          [FlagfitDeadlineSoon]
             @FlagType.Experiment(
@@ -170,7 +170,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -198,7 +198,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
           class FlagType {
             annotation class Ops(
-              val author: String,
+              val owner: String,
               val description: String,
               val expiryDate: String = "",
             )
@@ -217,7 +217,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Ops(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge"
               )
               fun awesomeOpsFeatureEnabled(): Boolean
@@ -258,7 +258,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = "hoge"
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -274,7 +274,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
         The flag of key: "new-awesome-feature" is used in the awesomeVariationFeatureEnabled function.
          [FlagfitDeadlineExpired]
@@ -307,7 +307,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = UNKNOWN_OWNER,
+                owner = UNKNOWN_OWNER,
                 description = UNKNOWN_DESCRIPTION,
                 expiryDate = UNKNOWN_EXPIRY_DATE,
               )
