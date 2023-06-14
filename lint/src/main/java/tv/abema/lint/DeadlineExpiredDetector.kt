@@ -50,12 +50,14 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         withZone(ZoneId.of(timeZoneId))
       }
     }
+    val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     if (owner == "UNKNOWN_OWNER" || expiryDate == "UNKNOWN_EXPIRY_DATE") return
+    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
