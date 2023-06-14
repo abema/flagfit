@@ -64,7 +64,10 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val uastParent = (element.uastParent as? KotlinUMethod) ?: return
     val methodName = uastParent.name
     val key = uastParent.annotations
-      .first { it.qualifiedName == "tv.abema.flagfit.annotation.BooleanFlag" }
+      .first {
+        it.qualifiedName == "tv.abema.flagfit.annotation.BooleanFlag" ||
+          it.qualifiedName == "tv.abema.flagfit.annotation.VariationFlag"
+      }
       .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
