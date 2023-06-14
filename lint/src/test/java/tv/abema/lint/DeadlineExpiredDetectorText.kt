@@ -214,6 +214,43 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .expectClean()
   }
 
+  @Test
+  fun testDeprecatedFlagTypeNoWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_OWNER
+          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_DESCRIPTION
+          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_EXPIRY_DATE
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Experiment(
+                author = UNKNOWN_OWNER,
+                description = UNKNOWN_DESCRIPTION,
+                expiryDate = UNKNOWN_EXPIRY_DATE,
+              )
+              fun awesomeOpsFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .allowCompilationErrors()
+      .run()
+      .expectClean()
+  }
+
   override fun getDetector(): Detector = DeadlineExpiredDetector()
 
   override fun getIssues(): MutableList<Issue> {

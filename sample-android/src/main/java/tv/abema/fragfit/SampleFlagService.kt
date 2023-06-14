@@ -1,5 +1,8 @@
 package tv.abema.fragfit
 
+import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_DESCRIPTION
+import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_EXPIRY_DATE
+import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_OWNER
 import tv.abema.flagfit.FlagType
 import tv.abema.flagfit.JustFlagSource
 import tv.abema.flagfit.annotation.BooleanFlag
@@ -50,6 +53,17 @@ interface SampleFlagService {
     expiryDate = "2022-12-30"
   )
   fun awesomePermissionFeatureEnabled(): Boolean
+
+  @BooleanFlag(
+    key = "new-awesome-unknown-feature",
+    defaultValue = false
+  )
+  @FlagType.WorkInProgress(
+    author = UNKNOWN_OWNER,
+    description = UNKNOWN_DESCRIPTION,
+    expiryDate = UNKNOWN_EXPIRY_DATE
+  )
+  fun awesomeUnknownFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-debug-feature",
