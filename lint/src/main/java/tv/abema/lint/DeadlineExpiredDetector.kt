@@ -55,7 +55,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
-    if (author.isEmpty() || expiryDate.isEmpty()) return
+    if (author == "UNKNOWN_OWNER" || expiryDate == "UNKNOWN_EXPIRY_DATE") return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {

@@ -18,6 +18,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
   private lateinit var stabBooleanFlag: TestFile
   private lateinit var stabFlagType: TestFile
+  private lateinit var stabDeprecatedInfo: TestFile
 
   @Before
   fun before() {
@@ -41,6 +42,22 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           val description: String,
           val expiryDate: String,
         )
+      }
+      """.trimIndent()
+    )
+    stabDeprecatedInfo = kotlin(
+      """
+      package tv.abema.flagfit
+      
+      object DeprecatedInfo {
+        @Deprecated("This flag should be assigned to an owner")
+        const val UNKNOWN_OWNER = "UNKNOWN_OWNER"
+      
+        @Deprecated("This flag should include a description")
+        const val UNKNOWN_DESCRIPTION = "UNKNOWN_DESCRIPTION"
+      
+        @Deprecated("This flag should be set to expire")
+        const val UNKNOWN_EXPIRY_DATE = "UNKNOWN_EXPIRY_DATE"
       }
       """.trimIndent()
     )
@@ -274,6 +291,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .files(
         stabBooleanFlag,
         stabFlagType,
+        stabDeprecatedInfo,
         kotlin(
           """
           package foo
@@ -300,7 +318,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       )
       .issues(*issues.toTypedArray())
       .allowMissingSdk()
-      .allowCompilationErrors()
       .run()
       .expectClean()
   }
