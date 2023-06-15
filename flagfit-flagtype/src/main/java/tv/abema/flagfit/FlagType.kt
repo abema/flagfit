@@ -9,7 +9,7 @@ class FlagType {
    * [Release Toggles](https://martinfowler.com/articles/feature-toggles.html#ReleaseToggles)
    */
   annotation class WorkInProgress(
-    val author: String,
+    val owner: String,
     val description: String,
     val expiryDate: String,
   )
@@ -20,7 +20,7 @@ class FlagType {
    * [Experiment Toggles](https://martinfowler.com/articles/feature-toggles.html#ExperimentToggles)
    */
   annotation class Experiment(
-    val author: String,
+    val owner: String,
     val description: String,
     val expiryDate: String,
   )
@@ -31,7 +31,7 @@ class FlagType {
    * [Ops Toggles](https://martinfowler.com/articles/feature-toggles.html#OpsToggles)
    */
   annotation class Ops(
-    val author: String,
+    val owner: String,
     val description: String,
     val expiryDate: String = "",
   )
@@ -42,7 +42,7 @@ class FlagType {
    * [Permissioning Toggles](https://martinfowler.com/articles/feature-toggles.html#PermissioningToggles)
    */
   annotation class Permission(
-    val author: String,
+    val owner: String,
     val description: String,
     val expiryDate: String,
   )

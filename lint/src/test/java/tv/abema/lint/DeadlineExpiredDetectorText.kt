@@ -18,6 +18,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
   private lateinit var stabBooleanFlag: TestFile
   private lateinit var stabFlagType: TestFile
+  private lateinit var stabDeprecatedInfo: TestFile
 
   @Before
   fun before() {
@@ -37,10 +38,26 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       
       class FlagType {
         annotation class Experiment(
-          val author: String,
+          val owner: String,
           val description: String,
           val expiryDate: String,
         )
+      }
+      """.trimIndent()
+    )
+    stabDeprecatedInfo = kotlin(
+      """
+      package tv.abema.flagfit
+      
+      object FlagfitDeprecatedParams {
+        @Deprecated("Flag with no assigned owner")
+        const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
+      
+        @Deprecated("Flag without a description")
+        const val DESCRIPTION_NOT_DEFINED = "DESCRIPTION_NOT_DEFINED"
+      
+        @Deprecated("Flag without an expiry date")
+        const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
       }
       """.trimIndent()
     )
@@ -64,7 +81,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01"
               )
@@ -80,7 +97,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
         The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
          [FlagfitDeadlineExpired]
@@ -109,7 +126,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -125,7 +142,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment author: Hoge Fuga will expire soon!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment owner: Hoge Fuga will expire soon!
         Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
          [FlagfitDeadlineSoon]
             @FlagType.Experiment(
@@ -153,7 +170,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -181,7 +198,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
           class FlagType {
             annotation class Ops(
-              val author: String,
+              val owner: String,
               val description: String,
               val expiryDate: String = "",
             )
@@ -200,7 +217,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Ops(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge"
               )
               fun awesomeOpsFeatureEnabled(): Boolean
@@ -241,7 +258,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = "hoge"
               )
               @FlagType.Experiment(
-                author = "Hoge Fuga",
+                owner = "Hoge Fuga",
                 description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
@@ -257,7 +274,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by author: Hoge Fuga has expired!
+        src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
         The flag of key: "new-awesome-feature" is used in the awesomeVariationFeatureEnabled function.
          [FlagfitDeadlineExpired]
@@ -266,6 +283,43 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
         0 errors, 1 warnings
         """.trimIndent()
       )
+  }
+
+  @Test
+  fun testDeprecatedFlagTypeNoWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        stabDeprecatedInfo,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+          import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Experiment(
+                owner = OWNER_NOT_DEFINED,
+                description = DESCRIPTION_NOT_DEFINED,
+                expiryDate = EXPIRY_DATE_NOT_DEFINED,
+              )
+              fun awesomeOpsFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
   }
 
   override fun getDetector(): Detector = DeadlineExpiredDetector()

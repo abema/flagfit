@@ -1,6 +1,9 @@
 package tv.abema.fragfit
 
 import tv.abema.flagfit.FlagType
+import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 import tv.abema.flagfit.JustFlagSource
 import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
@@ -13,7 +16,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.WorkInProgress(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
@@ -24,7 +27,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Experiment(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2322-12-30"
   )
@@ -35,7 +38,7 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Ops(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge"
   )
   fun awesomeOpsFeatureEnabled(): Boolean
@@ -45,11 +48,22 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.Permission(
-    author = "Hoge Fuga",
+    owner = "Hoge Fuga",
     description = "hogehoge",
     expiryDate = "2022-12-30"
   )
   fun awesomePermissionFeatureEnabled(): Boolean
+
+  @BooleanFlag(
+    key = "new-awesome-unknown-feature",
+    defaultValue = false
+  )
+  @FlagType.WorkInProgress(
+    owner = OWNER_NOT_DEFINED,
+    description = DESCRIPTION_NOT_DEFINED,
+    expiryDate = EXPIRY_DATE_NOT_DEFINED
+  )
+  fun awesomeUnknownFeatureEnabled(): Boolean
 
   @BooleanFlag(
     key = "new-awesome-debug-feature",

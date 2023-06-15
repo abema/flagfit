@@ -50,10 +50,14 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         withZone(ZoneId.of(timeZoneId))
       }
     }
+    val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
-    if (annotationAttributes.size == 2) return
-    val author = annotationAttributes.first { it.name == "author" }.evaluate().toString()
-    val expiryDate = annotationAttributes.first { it.name == "expiryDate" }.evaluate().toString()
+    val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
+      ?: ""
+    val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
+      ?.evaluate() as String?) ?: ""
+    if (owner == "OWNER_NOT_DEFINED" || expiryDate == "EXPIRY_DATE_NOT_DEFINED") return
+    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
@@ -73,13 +77,13 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
       val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
-        val message = "The @FlagType.$name created by `author: $author` has expired!\n" +
+        val message = "The @FlagType.$name created by `owner: $owner` has expired!\n" +
           "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDate.\n" +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
-        val message = "The @FlagType.$name `author: $author` will expire soon!\n" +
+        val message = "The @FlagType.$name `owner: $owner` will expire soon!\n" +
           "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week." +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
