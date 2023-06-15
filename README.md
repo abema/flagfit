@@ -2,6 +2,7 @@
 A Flexible Flag client for Android and Kotlin
 
 This library consists of a core **Flagfit** library and a **Flagfit flagtype** library.
+If you want to warn about the expiration time set in the Flag, please add the **lint** library as well.
 
 ## How to use
 
@@ -20,6 +21,8 @@ dependencies {
     implementation 'com.github.abema.flagfit:flagfit:1.0.0'
     // Flagfit flagtype
     implementation 'com.github.abema.flagfit:flagfit-flagtype:1.0.0'
+    // Flagfit lint
+    lintChecks 'com.github.abema.flagfit:lint:1.0.0'
 }
 ```
 
