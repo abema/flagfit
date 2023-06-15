@@ -331,6 +331,25 @@ Since `@FlagType.Ops` may be operated indefinitely, there is no need to set `exp
 fun awesomeFeatureEnabled(): Boolean
 ```
 
+There may be cases where you do not know the owner or do not want to intentionally generate an error due to not setting a property. In such cases, please set the value as follows
+
+```kotlin
+import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+
+@BooleanFlag(
+  key = "new-awesome-unknown-feature",
+  defaultValue = false
+)
+@FlagType.WorkInProgress(
+  owner = OWNER_NOT_DEFINED,
+  description = DESCRIPTION_NOT_DEFINED,
+  expiryDate = EXPIRY_DATE_NOT_DEFINED
+)
+fun awesomeUnknownFeatureEnabled(): Boolean
+```
+
 ### Setup for default flag types
 
 You can use the default flag types as follows:
