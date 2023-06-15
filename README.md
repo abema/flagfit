@@ -283,7 +283,7 @@ We develop by switching these flags.
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
-When using FlagType, please set `author`, `description` and `expiryDate`. In this way, any Flag that has passed its expiration date will be automatically created as an Issue with an assigned author from the workflow. [Please see this file](https://github.com/abema/flagfit/blob/create-issue-automation/.github/workflows/lintIssues.yml)
+When using FlagType, please set `author`, `description` and `expiryDate`. In this way, any Flag that has passed its expiration date will be automatically created as an Issue with an assigned author from the workflow. [Please see this file](https://github.com/abema/flagfit/blob/main/.github/workflows/lintIssues.yml)
 
 ```kotlin
 @BooleanFlag(
