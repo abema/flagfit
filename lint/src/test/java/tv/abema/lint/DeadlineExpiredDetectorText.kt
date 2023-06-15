@@ -49,15 +49,15 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       """
       package tv.abema.flagfit
       
-      object DeprecatedInfo {
-        @Deprecated("This flag should be assigned to an owner")
-        const val UNKNOWN_OWNER = "UNKNOWN_OWNER"
+      object FlagfitDeprecatedParams {
+        @Deprecated("Flag with no assigned owner")
+        const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
       
-        @Deprecated("This flag should include a description")
-        const val UNKNOWN_DESCRIPTION = "UNKNOWN_DESCRIPTION"
+        @Deprecated("Flag without a description")
+        const val DESCRIPTION_NOT_DEFINED = "DESCRIPTION_NOT_DEFINED"
       
-        @Deprecated("This flag should be set to expire")
-        const val UNKNOWN_EXPIRY_DATE = "UNKNOWN_EXPIRY_DATE"
+        @Deprecated("Flag without an expiry date")
+        const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
       }
       """.trimIndent()
     )
@@ -297,9 +297,9 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_OWNER
-          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_DESCRIPTION
-          import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_EXPIRY_DATE
+          import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+          import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
           
           interface Example {
               @BooleanFlag(
@@ -307,9 +307,9 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 defaultValue = false
               )
               @FlagType.Experiment(
-                owner = UNKNOWN_OWNER,
-                description = UNKNOWN_DESCRIPTION,
-                expiryDate = UNKNOWN_EXPIRY_DATE,
+                owner = OWNER_NOT_DEFINED,
+                description = DESCRIPTION_NOT_DEFINED,
+                expiryDate = EXPIRY_DATE_NOT_DEFINED,
               )
               fun awesomeOpsFeatureEnabled(): Boolean
           }

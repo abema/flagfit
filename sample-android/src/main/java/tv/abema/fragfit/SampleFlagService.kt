@@ -1,9 +1,9 @@
 package tv.abema.fragfit
 
-import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_DESCRIPTION
-import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_EXPIRY_DATE
-import tv.abema.flagfit.DeprecatedInfo.UNKNOWN_OWNER
 import tv.abema.flagfit.FlagType
+import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 import tv.abema.flagfit.JustFlagSource
 import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
@@ -59,9 +59,9 @@ interface SampleFlagService {
     defaultValue = false
   )
   @FlagType.WorkInProgress(
-    owner = UNKNOWN_OWNER,
-    description = UNKNOWN_DESCRIPTION,
-    expiryDate = UNKNOWN_EXPIRY_DATE
+    owner = OWNER_NOT_DEFINED,
+    description = DESCRIPTION_NOT_DEFINED,
+    expiryDate = EXPIRY_DATE_NOT_DEFINED
   )
   fun awesomeUnknownFeatureEnabled(): Boolean
 
