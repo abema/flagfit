@@ -51,9 +51,7 @@ class FlagExpirationIssueMaintainer {
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
         val issueTitle = "Expiration status of the '$key' flag"
-        val issueBody = """
-          |## Warning
-          |
+        val warningMessage = """
           |$message
           |
           |<!--
@@ -83,7 +81,7 @@ class FlagExpirationIssueMaintainer {
 
         if (existingIssue == null) {
           val issue = repo.createIssue(issueTitle)
-            .body(issueBody)
+            .body(warningMessage)
             .assignee(assignee)
             .label(label)
             .create()
@@ -95,12 +93,13 @@ class FlagExpirationIssueMaintainer {
               text = existingIssue.body,
               patternRegex = ruleIdPatternRegex
             )) {
-            existingIssue.comments.map {
+            existingIssue.comments.forEach {
               if (ruleId == matchText(text = it.body, patternRegex = ruleIdPatternRegex)) {
                 it.delete()
               }
             }
-            existingIssue.comment(issueBody)
+            val warningComment = "## Warning\n$warningMessage"
+            existingIssue.comment(warningComment)
           }
         }
       }
