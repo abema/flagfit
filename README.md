@@ -286,7 +286,7 @@ We develop by switching these flags.
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
-When using FlagType, please set `author`, `description` and `expiryDate`. [Please see section](https://github.com/abema/flagfit/blob/main/README.md#Lint-check-based-on-expiration-date)
+When using FlagType, please set `author`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
 
 ```kotlin
 @BooleanFlag(
@@ -390,6 +390,6 @@ Flags that have passed their expiration date or are scheduled to expire within t
 ### Automatic issue creation via workflow
 
 Flags that have passed their expiration date will be automatically created as issues assigned to the creator through the workflow.
-- Please copy the [workflow](https://github.com/abema/flagfit/blob/main/.github/workflows/lintIssues.yml) and [script](https://github.com/abema/flagfit/blob/main/scripts/maintain-flagfit-expiration-issue.main.kts) to the project you are using.
+- Please copy the [workflow](./.github/workflows/lintIssues.yml) and [script](./scripts/maintain-flagfit-expiration-issue.main.kts) to the project you are using.
 - The workflow allows you to set a cron schedule, so please set it as appropriate.
 - When setting feature flags with Flagfit, you will likely use `@BooleanFlag` or `@VariationFlag`, but please make sure that the key value is always unique.
