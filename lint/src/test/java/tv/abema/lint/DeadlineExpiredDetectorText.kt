@@ -202,6 +202,11 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               val description: String,
               val expiryDate: String = "",
             )
+            annotation class Permission(
+              val owner: String,
+              val description: String,
+              val expiryDate: String = "",
+            )
           }
           """.trimIndent()
         ),
@@ -213,7 +218,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
           interface Example {
               @BooleanFlag(
-                key = "new-awesome-feature",
+                key = "new-ops-awesome-feature",
                 defaultValue = false
               )
               @FlagType.Ops(
@@ -221,6 +226,15 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 description = "hogehoge"
               )
               fun awesomeOpsFeatureEnabled(): Boolean
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Permission(
+                owner = "Hoge Fuga",
+                description = "hogehoge"
+              )
+              fun awesomePermissionFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )

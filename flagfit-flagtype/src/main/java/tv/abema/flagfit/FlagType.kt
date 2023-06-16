@@ -44,7 +44,7 @@ class FlagType {
   annotation class Permission(
     val owner: String,
     val description: String,
-    val expiryDate: String,
+    val expiryDate: String = "",
   )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
