@@ -286,7 +286,7 @@ We develop by switching these flags.
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
-When using FlagType, please set `author`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
+When using FlagType, please set `owner`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
 
 ```kotlin
 @BooleanFlag(
@@ -294,7 +294,7 @@ When using FlagType, please set `author`, `description` and `expiryDate`. [Pleas
   defaultValue = false
 )
 @FlagType.WorkInProgress(
-  author = "{GitHub UserId}",
+  owner = "{GitHub UserId}",
   description = "The flag for this is FutureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
@@ -310,7 +310,7 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
   defaultValue = false
 )
 @FlagType.Experiment(
-  author = "{GitHub UserId}",
+  owner = "{GitHub UserId}",
   description = "The flag for this is FutureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
@@ -328,7 +328,7 @@ Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, t
   defaultValue = false
 )
 @FlagType.Ops(
-  author = "{GitHub UserId}",
+  owner = "{GitHub UserId}",
   description = "The flag for this is FutureFlag for awesome features!"
 )
 fun awesomeFeatureEnabled(): Boolean
