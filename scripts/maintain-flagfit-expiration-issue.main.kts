@@ -50,10 +50,10 @@ class FlagExpirationIssueMaintainer {
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
-        val issueTitle = when(ruleId) {
-          "FlagfitDeadlineSoon" -> "[Flagfit]: The expiration date for future flag is in 7 days."
-          "FlagfitDeadlineExpired" -> "[Flagfit]: The expiration date of future flag has passed."
-          else -> return
+        val issueTitle = when (ruleId) {
+          "FlagfitDeadlineSoon" -> "[Flagfit]: The $key flag will expire soon."
+          "FlagfitDeadlineExpired" -> "[Flagfit]: The $key flag has expired"
+          else -> ""
         }
         val issueBody = """
           |## Warning
