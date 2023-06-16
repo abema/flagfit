@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun FragfitSampleComponent(sampleFlagService: SampleFlagService) {
+fun FlagfitSampleComponent(sampleFlagService: SampleFlagService) {
 
   val awesomeWipFeatureEnabled = sampleFlagService.awesomeWipFeatureEnabled()
   val awesomeExperimentFeatureEnabled = sampleFlagService.awesomeExperimentFeatureEnabled()

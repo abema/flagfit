@@ -125,5 +125,6 @@ gradle-app.setting
 # Other
 .idea/vcs.xml
 local.properties
+.idea/kotlinScripting.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij
