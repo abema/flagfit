@@ -3,7 +3,6 @@
 @file:DependsOn("org.kohsuke:github-api:1.315")
 
 import org.json.JSONObject
-import org.kohsuke.github.GHIssue
 import org.kohsuke.github.GHIssueState
 import org.kohsuke.github.GitHub
 import java.io.File
@@ -18,7 +17,7 @@ class FlagExpirationIssueMaintainer {
     val gitHub = GitHub.connectUsingOAuth(githubToken)
     val repo = gitHub.getRepository(repoName)
     val targetRuleIdList = listOf(FLAGFIT_DEADLINE_SOON, FLAGFIT_DEADLINE_EXPIRED)
-    val file = File("./lint-results.sarif")
+    val file = File("../lint-results.sarif")
     val content = file.readText()
     val jsonData = JSONObject(content)
     val runs = jsonData
@@ -51,8 +50,25 @@ class FlagExpirationIssueMaintainer {
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
-        val issueTitle = "$ruleId <$key>"
-        val issueBody = "## Warning\n\n$message"
+        val issueTitle = when(ruleId) {
+          "FlagfitDeadlineSoon" -> "[Flagfit]: The expiration date for future flag is in 7 days."
+          "FlagfitDeadlineExpired" -> "[Flagfit]: The expiration date of future flag has passed."
+          else -> return
+        }
+        val issueBody = """
+          |## Warning
+          |
+          |$message
+          |
+          |<!--
+          |DO NOT CHANGE
+          |This metadata is used for issue management.
+          |
+          |`ruleId: $ruleId`
+          |`key: $key`
+          |`owner: $assignee`
+          |-->
+        """.trimMargin()
         val locations = result.getJSONArray("locations").getJSONObject(0)
         val physicalLocation = locations.getJSONObject("physicalLocation")
         val artifactLocation = physicalLocation.getJSONObject("artifactLocation")
@@ -64,12 +80,12 @@ class FlagExpirationIssueMaintainer {
             contextRegion.getInt("endLine")
           }"
 
-        val isExistingIssue = existingIssues.any { issue ->
+        val existingIssue = existingIssues.firstOrNull { issue ->
           val body = issue.body
           key == matchText(text = body, patternRegex = keyPatternRegex)
         }
 
-        if (!isExistingIssue) {
+        if (existingIssue == null) {
           val issue = repo.createIssue(issueTitle)
             .body(issueBody)
             .assignee(assignee)
@@ -78,25 +94,14 @@ class FlagExpirationIssueMaintainer {
           issue.comment(artifactUri)
           existingIssues.add(issue)
         } else {
-          updateWarning(existingIssues, key, issueTitle, issueBody)
+          val ruleIdPatternRegex = "`ruleId: (.*?)`"
+          if (ruleId != matchText(
+              text = existingIssue.body,
+              patternRegex = ruleIdPatternRegex
+            )) {
+            existingIssue.comment(issueBody)
+          }
         }
-      }
-    }
-  }
-
-  private fun updateWarning(
-    existingIssues: MutableList<GHIssue>,
-    key: String,
-    issueTitle: String,
-    issueBody: String,
-  ) {
-    existingIssues.forEach { issue ->
-      val titleSoon = "$FLAGFIT_DEADLINE_SOON <$key>"
-      val titleExpired = "$FLAGFIT_DEADLINE_EXPIRED <$key>"
-      if (issue.title == titleSoon
-        && issueTitle == titleExpired) {
-        issue.title = titleExpired
-        issue.comment(issueBody)
       }
     }
   }
