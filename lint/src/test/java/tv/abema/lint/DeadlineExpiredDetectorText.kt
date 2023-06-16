@@ -143,7 +143,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .expect(
         """
         src/foo/Example.kt:10: Warning: The @FlagType.Experiment owner: Hoge Fuga will expire soon!
-        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
+        Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.
+        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
          [FlagfitDeadlineSoon]
             @FlagType.Experiment(
             ^
@@ -202,6 +203,11 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               val description: String,
               val expiryDate: String = "",
             )
+            annotation class Permission(
+              val owner: String,
+              val description: String,
+              val expiryDate: String = "",
+            )
           }
           """.trimIndent()
         ),
@@ -213,7 +219,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
           interface Example {
               @BooleanFlag(
-                key = "new-awesome-feature",
+                key = "new-ops-awesome-feature",
                 defaultValue = false
               )
               @FlagType.Ops(
@@ -221,6 +227,15 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 description = "hogehoge"
               )
               fun awesomeOpsFeatureEnabled(): Boolean
+              @BooleanFlag(
+                key = "new-permission-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Permission(
+                owner = "Hoge Fuga",
+                description = "hogehoge"
+              )
+              fun awesomePermissionFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )

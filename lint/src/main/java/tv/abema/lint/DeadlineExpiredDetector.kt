@@ -57,7 +57,8 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     if (owner == "OWNER_NOT_DEFINED" || expiryDate == "EXPIRY_DATE_NOT_DEFINED") return
-    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()) return
+    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()
+      || qualifiedName == "tv.abema.flagfit.FlagType.Permission" && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
@@ -84,7 +85,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
         val message = "The @FlagType.$name `owner: $owner` will expire soon!\n" +
-          "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week." +
+          "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week.\n" +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
         context.report(ISSUE_DEADLINE_SOON, element, location, message)
