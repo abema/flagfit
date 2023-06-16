@@ -50,11 +50,7 @@ class FlagExpirationIssueMaintainer {
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
-        val issueTitle = when (ruleId) {
-          "FlagfitDeadlineSoon" -> "[Flagfit]: The $key flag will expire soon."
-          "FlagfitDeadlineExpired" -> "[Flagfit]: The $key flag has expired"
-          else -> ""
-        }
+        val issueTitle = "Expired Status of the $key Flag"
         val issueBody = """
           |## Warning
           |
@@ -99,6 +95,11 @@ class FlagExpirationIssueMaintainer {
               text = existingIssue.body,
               patternRegex = ruleIdPatternRegex
             )) {
+            existingIssue.comments.map {
+              if (ruleId == matchText(text = it.body, patternRegex = ruleIdPatternRegex)) {
+                it.delete()
+              }
+            }
             existingIssue.comment(issueBody)
           }
         }
