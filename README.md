@@ -398,4 +398,4 @@ Flags that have passed their expiration date will be automatically created as is
 - Please copy the [workflow](./.github/workflows/lintIssues.yml) and [script](./scripts/maintain-flagfit-expiration-issue.main.kts) to the project you are using.
 - The workflow allows you to set a cron schedule, so please set it as appropriate.
 - When setting feature flags with Flagfit, you will likely use `@BooleanFlag` or `@VariationFlag`, but please make sure that the key value is always unique.
-<img width="1267" alt="Sample issue" src="https://github.com/abema/flagfit/assets/51113946/ce5c877e-8d5e-4b5d-b7d6-d9b1a17db70f">
+<img width="1250" alt="Sample issues" src="https://github.com/abema/flagfit/assets/51113946/b2a1906d-2493-49c0-a0cd-4fa8fd0d132d">
