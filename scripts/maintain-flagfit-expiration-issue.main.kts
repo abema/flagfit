@@ -50,7 +50,7 @@ class FlagExpirationIssueMaintainer {
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
-        val issueTitle = "Expiration status of the '$key' flag"
+        val issueTitle = "Expiration status of the $key flag"
         val warningMessage = """
           |$message
           |
