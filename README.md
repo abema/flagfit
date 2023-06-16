@@ -386,9 +386,11 @@ val flagfit = Flagfit(
 ## Lint check based on expiration date
 
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
-| soon | expired |
+| Explanation | Image |
 |-----|-----|
-|<img width="791" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/8e2d47d1-1c2f-4d9d-a24c-f8481fd4d529">|<img width="632" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/06d561ca-b650-4274-a077-a092cad0add8">|
+|When the flag is about to expire|<img width="791" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/8e2d47d1-1c2f-4d9d-a24c-f8481fd4d529">|
+|When the flag has expired|<img width="632" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/06d561ca-b650-4274-a077-a092cad0add8">|
+
 
 ### Automatic issue creation via workflow
 
