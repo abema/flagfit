@@ -227,7 +227,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               fun awesomeOpsFeatureEnabled(): Boolean
               @BooleanFlag(
-                key = "new-awesome-feature",
+                key = "new-permission-awesome-feature",
                 defaultValue = false
               )
               @FlagType.Permission(
