@@ -320,7 +320,7 @@ fun awesomeFeatureEnabled(): Boolean
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
 If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
 
-Since `@FlagType.Ops` may be operated indefinitely, there is no need to set `expiryDate`.
+Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, there is no need to set `expiryDate`.
 
 ```kotlin
 @BooleanFlag(
