@@ -384,8 +384,11 @@ val flagfit = Flagfit(
 ```
 
 ## Lint check based on expiration date
+
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
+
 ### Automatic issue creation via workflow
+
 Flags that have passed their expiration date will be automatically created as issues assigned to the creator through the workflow.
 - Please copy the [workflow](https://github.com/abema/flagfit/blob/main/.github/workflows/lintIssues.yml) and [script](https://github.com/abema/flagfit/blob/main/scripts/maintain-flagfit-expiration-issue.main.kts) to the project you are using.
 - The workflow allows you to set a cron schedule, so please set it as appropriate.
