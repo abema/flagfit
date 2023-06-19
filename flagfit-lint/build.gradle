@@ -15,6 +15,6 @@ dependencies {
 
 jar {
   manifest {
-    attributes 'Lint-Registry-v2': 'tv.abema.lint.IssueRegistry'
+    attributes 'Lint-Registry-v2': 'tv.abema.flagfit.IssueRegistry'
   }
 }

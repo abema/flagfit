@@ -1,4 +1,4 @@
-package tv.abema.lint
+package tv.abema.flagfit
 
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.client.api.Vendor
