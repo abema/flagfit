@@ -2,6 +2,7 @@
 A Flexible Flag client for Android and Kotlin
 
 This library consists of a core **Flagfit** library and a **Flagfit flagtype** library.
+If you want to warn about the expiration time set in the Flag, please add the **lint** library as well.
 
 ## How to use
 
@@ -20,6 +21,8 @@ dependencies {
     implementation 'com.github.abema.flagfit:flagfit:1.0.0'
     // Flagfit flagtype
     implementation 'com.github.abema.flagfit:flagfit-flagtype:1.0.0'
+    // Flagfit lint
+    lintChecks 'com.github.abema.flagfit:lint:1.0.0'
 }
 ```
 
@@ -281,14 +284,20 @@ As we develop, we use Release Toggles, Experiment Toggles, and Opts Toggles for 
 We develop by switching these flags.  
   
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
-If the flag using this `@ToggleType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
+If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
+
+When using FlagType, please set `owner`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
 
 ```kotlin
 @BooleanFlag(
   key = "awesome-feature",
   defaultValue = false
 )
-@ToggleType.WorkInProgress
+@FlagType.WorkInProgress(
+  owner = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!",
+  expiryDate = "2023-06-13"
+)
 fun awesomeFeatureEnabled(): Boolean
 ```
 
@@ -300,12 +309,49 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
   key = "awesome-feature",
   defaultValue = false
 )
-@FlagType.Experiment
+@FlagType.Experiment(
+  owner = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!",
+  expiryDate = "2023-06-13"
+)
 fun awesomeFeatureEnabled(): Boolean
 ```
 
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
 If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
+
+Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, there is no need to set `expiryDate`.
+
+```kotlin
+@BooleanFlag(
+  key = "awesome-feature",
+  defaultValue = false
+)
+@FlagType.Ops(
+  owner = "{GitHub UserId}",
+  description = "The flag for this is FutureFlag for awesome features!"
+)
+fun awesomeFeatureEnabled(): Boolean
+```
+
+There may be cases where you do not know the owner or do not want to intentionally generate an error due to not setting a property. In such cases, please set the value as follows
+
+```kotlin
+import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+
+@BooleanFlag(
+  key = "new-awesome-unknown-feature",
+  defaultValue = false
+)
+@FlagType.WorkInProgress(
+  owner = OWNER_NOT_DEFINED,
+  description = DESCRIPTION_NOT_DEFINED,
+  expiryDate = EXPIRY_DATE_NOT_DEFINED
+)
+fun awesomeUnknownFeatureEnabled(): Boolean
+```
 
 ### Setup for default flag types
 
@@ -336,3 +382,20 @@ val flagfit = Flagfit(
   annotationAdapters = FlagType.annotationAdapters()
 )
 ```
+
+## Lint check based on expiration date
+
+Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
+| Explanation | Image |
+|-----|-----|
+|When the flag is about to expire|<img width="791" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/8e2d47d1-1c2f-4d9d-a24c-f8481fd4d529">|
+|When the flag has expired|<img width="632" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/06d561ca-b650-4274-a077-a092cad0add8">|
+
+
+### Automatic issue creation via workflow
+
+Flags that have passed their expiration date will be automatically created as issues assigned to the creator through the workflow.
+- Please copy the [workflow](./.github/workflows/lintIssues.yml) and [script](./scripts/maintain-flagfit-expiration-issue.main.kts) to the project you are using.
+- The workflow allows you to set a cron schedule, so please set it as appropriate.
+- When setting feature flags with Flagfit, you will likely use `@BooleanFlag` or `@VariationFlag`, but please make sure that the key value is always unique.
+<img width="1250" alt="Sample issues" src="https://github.com/abema/flagfit/assets/51113946/b2a1906d-2493-49c0-a0cd-4fa8fd0d132d">

@@ -17,7 +17,7 @@ class FlagExpirationIssueMaintainer {
     val gitHub = GitHub.connectUsingOAuth(githubToken)
     val repo = gitHub.getRepository(repoName)
     val targetRuleIdList = listOf(FLAGFIT_DEADLINE_SOON, FLAGFIT_DEADLINE_EXPIRED)
-    val file = File("../lint-results.sarif")
+    val file = File("./lint-results.sarif")
     val content = file.readText()
     val jsonData = JSONObject(content)
     val runs = jsonData
@@ -50,7 +50,7 @@ class FlagExpirationIssueMaintainer {
         val key = matchText(text = message, patternRegex = keyPatternRegex)
         val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
 
-        val issueTitle = "Expiration status of the '$key' flag"
+        val issueTitle = "Expiration status of the $key flag"
         val warningMessage = """
           |$message
           |
