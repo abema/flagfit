@@ -1,4 +1,4 @@
-package tv.abema.lint
+package tv.abema.flagfit
 
 import com.android.tools.lint.detector.api.AnnotationInfo
 import com.android.tools.lint.detector.api.AnnotationUsageInfo

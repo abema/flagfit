@@ -1,4 +1,4 @@
-package tv.abema.lint
+package tv.abema.flagfit
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestFile
@@ -8,10 +8,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import tv.abema.lint.DeadlineExpiredDetector.Companion.CURRENT_TIME
-import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
-import tv.abema.lint.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
-import tv.abema.lint.DeadlineExpiredDetector.Companion.TIME_ZONE
+import tv.abema.flagfit.DeadlineExpiredDetector.Companion.CURRENT_TIME
+import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
+import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
+import tv.abema.flagfit.DeadlineExpiredDetector.Companion.TIME_ZONE
 
 @RunWith(JUnit4::class)
 class DeadlineExpiredDetectorText : LintDetectorTest() {
