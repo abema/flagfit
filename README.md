@@ -80,6 +80,10 @@ class RemoteFlagSource(
 }
 ```
 
+In this example, `RemoteFlagSource` is a class that communicates with a server to fetch the feature flag. `remoteFlags` is a hypothetical API service that your application uses to communicate with the backend.
+
+Please replace `remoteFlags` and `remoteFlags.get(key, defaultValue)` with your actual implementation to communicate with the server or SDK like Firebase Remote Config.
+
 ### Fetching Feature Flags
 
 ```kotlin
@@ -88,10 +92,6 @@ val flagfit = Flagfit(
   annotationAdapters = FlagType.annotationAdapters()
 )
 ```
-
-In this example, `RemoteFlagSource` is a class that communicates with a server to fetch the feature flag. `remoteFlags` is a hypothetical API service that your application uses to communicate with the backend.
-
-Please replace `remoteFlags` and `remoteFlags.get(key, defaultValue)` with your actual implementation to communicate with the server or SDK like Firebase Remote Config.
 
 Flagfit generates an implementation of the `FlagService` interface which can then be invoked:
 
