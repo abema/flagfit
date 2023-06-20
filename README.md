@@ -30,11 +30,11 @@ allprojects {
 ```groovy
 dependencies {
     // Flagfit
-    implementation 'com.github.abema.flagfit:flagfit:1.1.0'
+    implementation 'com.github.abema.flagfit:flagfit:1.1.1'
     // Flagfit flagtype
-    implementation 'com.github.abema.flagfit:flagfit-flagtype:1.1.0'
+    implementation 'com.github.abema.flagfit:flagfit-flagtype:1.1.1'
     // Flagfit lint
-    lintChecks 'com.github.abema.flagfit:flagfit-lint:1.1.0'
+    lintChecks 'com.github.abema.flagfit:flagfit-lint:1.1.1'
 }
 ```
 
@@ -53,7 +53,6 @@ interface FlagService {
     )
     @FlagType.Experiment(
       owner = "{GitHub UserId}",
-      description = "The flag for this is FeatureFlag for awesome features!",
       // If the flag expires, the lint will warn you.
       expiryDate = "2023-06-13"
     )
@@ -368,7 +367,7 @@ We develop by switching these flags.
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
-When using FlagType, please set `owner`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
+When using FlagType, please set `owner` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
 
 ```kotlin
 @BooleanFlag(
@@ -377,7 +376,6 @@ When using FlagType, please set `owner`, `description` and `expiryDate`. [Please
 )
 @FlagType.WorkInProgress(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -393,7 +391,6 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
 )
 @FlagType.Experiment(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -411,7 +408,6 @@ Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, t
 )
 @FlagType.Ops(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!"
 )
 fun awesomeFeatureEnabled(): Boolean
 ```
@@ -419,7 +415,6 @@ fun awesomeFeatureEnabled(): Boolean
 There may be cases where you do not know the owner or do not want to intentionally generate an error due to not setting a property. In such cases, please set the value as follows
 
 ```kotlin
-import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 
@@ -429,7 +424,6 @@ import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 )
 @FlagType.WorkInProgress(
   owner = OWNER_NOT_DEFINED,
-  description = DESCRIPTION_NOT_DEFINED,
   expiryDate = EXPIRY_DATE_NOT_DEFINED
 )
 fun awesomeUnknownFeatureEnabled(): Boolean
@@ -470,8 +464,8 @@ val flagfit = Flagfit(
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
 | Explanation | Image |
 |-----|-----|
-|When the flag is about to expire|<img width="791" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/8e2d47d1-1c2f-4d9d-a24c-f8481fd4d529">|
-|When the flag has expired|<img width="632" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/06d561ca-b650-4274-a077-a092cad0add8">|
+|When the flag is about to expire|<img width="799" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/7fc78bd3-54ba-44c5-9433-9531563b1388">|
+|When the flag has expired|<img width="687" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/804e49b8-1555-413e-9455-f6bf21b6e622">|
 
 
 ### Automatic issue creation via workflow

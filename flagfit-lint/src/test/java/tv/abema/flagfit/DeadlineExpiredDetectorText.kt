@@ -39,7 +39,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       class FlagType {
         annotation class Experiment(
           val owner: String,
-          val description: String,
           val expiryDate: String,
         )
       }
@@ -52,9 +51,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       object FlagfitDeprecatedParams {
         @Deprecated("Flag with no assigned owner")
         const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
-      
-        @Deprecated("Flag without a description")
-        const val DESCRIPTION_NOT_DEFINED = "DESCRIPTION_NOT_DEFINED"
       
         @Deprecated("Flag without an expiry date")
         const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
@@ -82,7 +78,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Experiment(
                 owner = "Hoge Fuga",
-                description = "hogehoge",
                 expiryDate = "2023-06-01"
               )
               fun awesomeExperimentFeatureEnabled(): Boolean
@@ -127,7 +122,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Experiment(
                 owner = "Hoge Fuga",
-                description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
               fun awesomeExperimentFeatureEnabled(): Boolean
@@ -172,7 +166,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Experiment(
                 owner = "Hoge Fuga",
-                description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
               fun awesomeExperimentFeatureEnabled(): Boolean
@@ -200,12 +193,10 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           class FlagType {
             annotation class Ops(
               val owner: String,
-              val description: String,
               val expiryDate: String = "",
             )
             annotation class Permission(
               val owner: String,
-              val description: String,
               val expiryDate: String = "",
             )
           }
@@ -224,7 +215,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Ops(
                 owner = "Hoge Fuga",
-                description = "hogehoge"
               )
               fun awesomeOpsFeatureEnabled(): Boolean
               @BooleanFlag(
@@ -233,7 +223,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Permission(
                 owner = "Hoge Fuga",
-                description = "hogehoge"
               )
               fun awesomePermissionFeatureEnabled(): Boolean
           }
@@ -274,7 +263,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Experiment(
                 owner = "Hoge Fuga",
-                description = "hogehoge",
                 expiryDate = "2023-06-01",
               )
               fun awesomeVariationFeatureEnabled(): Boolean
@@ -313,7 +301,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
           import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
-          import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
           import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
           
           interface Example {
@@ -323,7 +310,6 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Experiment(
                 owner = OWNER_NOT_DEFINED,
-                description = DESCRIPTION_NOT_DEFINED,
                 expiryDate = EXPIRY_DATE_NOT_DEFINED,
               )
               fun awesomeOpsFeatureEnabled(): Boolean
