@@ -11,14 +11,14 @@ fun FlagfitSampleComponent(sampleFlagService: SampleFlagService) {
   val awesomeWipFeatureEnabled = sampleFlagService.awesomeWipFeatureEnabled()
   val awesomeExperimentFeatureEnabled = sampleFlagService.awesomeExperimentFeatureEnabled()
   val awesomeOpsFeatureEnabled = sampleFlagService.awesomeOpsFeatureEnabled()
-  val awesomePermissionFutureEnabled = sampleFlagService.awesomePermissionFeatureEnabled()
-  val awesomeDebugFutureEnabled = sampleFlagService.awesomeDebugFeatureEnabled()
+  val awesomePermissionFeatureEnabled = sampleFlagService.awesomePermissionFeatureEnabled()
+  val awesomeDebugFeatureEnabled = sampleFlagService.awesomeDebugFeatureEnabled()
 
   val wipText = if (awesomeWipFeatureEnabled) "New Function" else "Previous function"
   val experimentText = if (awesomeExperimentFeatureEnabled) "New Function" else "Previous function"
   val opsText = if (awesomeOpsFeatureEnabled) "New Function" else "Previous function"
-  val permissionText = if (awesomePermissionFutureEnabled) "New Function" else "Previous function"
-  val debugText = if (awesomeDebugFutureEnabled) "New Function" else "Previous function"
+  val permissionText = if (awesomePermissionFeatureEnabled) "New Function" else "Previous function"
+  val debugText = if (awesomeDebugFeatureEnabled) "New Function" else "Previous function"
 
   Column(
     verticalArrangement = Arrangement.Center

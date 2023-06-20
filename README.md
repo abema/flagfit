@@ -295,7 +295,7 @@ When using FlagType, please set `owner`, `description` and `expiryDate`. [Please
 )
 @FlagType.WorkInProgress(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FutureFlag for awesome features!",
+  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -311,7 +311,7 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
 )
 @FlagType.Experiment(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FutureFlag for awesome features!",
+  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -329,7 +329,7 @@ Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, t
 )
 @FlagType.Ops(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FutureFlag for awesome features!"
+  description = "The flag for this is FeatureFlag for awesome features!"
 )
 fun awesomeFeatureEnabled(): Boolean
 ```

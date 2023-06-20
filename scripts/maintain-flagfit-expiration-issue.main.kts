@@ -23,7 +23,7 @@ class FlagExpirationIssueMaintainer {
     val runs = jsonData
       .getJSONArray("runs")
     val results = runs.getJSONObject(0).getJSONArray("results")
-    val label = "futureflag-expiration"
+    val label = "featureflag-expiration"
     val limitIssue = 50
     val existingIssues = repo.queryIssues()
       .label(label)
