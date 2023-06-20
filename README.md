@@ -1,10 +1,22 @@
 # Flagfit
-A Flexible Flag client for Android and Kotlin
+A Flexible Feature Flag Library for Android and Kotlin
 
-This library consists of a core **Flagfit** library and a **Flagfit flagtype** library.
-If you want to warn about the expiration time set in the Flag, please add the **lint** library as well.
+Flagfit is a powerful, lightweight library designed to turn your feature flags into easy-to-manage Kotlin interfaces. Whether you're a small startup or a large enterprise, you'll find Flagfit's versatility and simplicity beneficial to your software development cycle.
 
-## How to use
+By integrating Flagfit into your development workflow, you'll be able to:
+
+1. **Efficiently manage feature rollouts**: Toggle new features on or off without deploying new code, giving you the flexibility to test, iterate, and release at your own pace.
+2. **Perform A/B testing**: Easily create and manage multiple versions of your app for conducting experiments and making data-driven decisions.
+3. **Mitigate risks**: Gradually roll out features to a subset of users to minimize the impact of potential bugs or issues.
+
+In addition, Flagfit provides a set of robust tools for custom flag sources, async flag fetching with Kotlin Coroutines, custom annotations, and more. Use our built-in lint tool to warn about flag expiration times, ensuring that your flags stay up-to-date and relevant.
+
+## Quick Start
+
+### Installation
+
+To incorporate Flagfit into your Android project, add the following dependencies to your `build.gradle` file:
+
 
 ```groovy
 allprojects {
@@ -25,6 +37,76 @@ dependencies {
     lintChecks 'com.github.abema.flagfit:flagfit-lint:1.1.0'
 }
 ```
+
+If you want to warn about the expiration time set in the Flag, please add the **flagfit-lint** library as well.
+
+
+### Defining Feature Flags
+
+With Flagfit, feature flags are defined using Kotlin interfaces. The `FlagType` annotation specifies different flag types, allowing more control and information about how and when the flag is used:
+
+```kotlin
+interface FlagService {
+    @BooleanFlag(
+      key = "awesome-feature",
+      defaultValue = false
+    )
+    @FlagType.Experiment(
+      owner = "{GitHub UserId}",
+      description = "The flag for this is FeatureFlag for awesome features!",
+      // If the flag expires, the lint will warn you.
+      expiryDate = "2023-06-13"
+    )
+    fun awesomeFeatureEnabled(): Boolean
+}
+```
+
+### Defining FlagSources
+
+A `FlagSource` is an abstraction that reads the actual state of a feature flag from a specific location, such as a server. Flagfit allows you to provide a list of `FlagSource` instances, meaning you can retrieve flags from multiple sources:
+
+```kotlin
+class RemoteFlagSource(
+    private val remoteFlags: RemoveFlags // Your actual implementation to communicate with server
+): BlockingBooleanFlagSource,
+    ExperimentFlagSource {
+
+  override fun get(
+    key: String,
+    defaultValue: Boolean,
+    env: Map<String, Any>
+  ): Boolean {
+    return remoteFlags.get(key, defaultValue)
+  }
+}
+```
+
+### Fetching Feature Flags
+
+```kotlin
+val flagfit = Flagfit(
+  flagSources = listOf(RemoteFlagSource(flags)),
+  annotationAdapters = FlagType.annotationAdapters()
+)
+```
+
+In this example, `RemoteFlagSource` is a class that communicates with a server to fetch the feature flag. `remoteFlags` is a hypothetical API service that your application uses to communicate with the backend.
+
+Please replace `remoteFlags` and `remoteFlags.get(key, defaultValue)` with your actual implementation to communicate with the server or SDK like Firebase Remote Config.
+
+Flagfit generates an implementation of the `FlagService` interface which can then be invoked:
+
+```kotlin
+val flagService: FlagService = flagfit.create()
+val awesomeFeatureEnabled = flagService.awesomeFeatureEnabled()
+```
+
+### Controlling Features
+
+Feature availability in your application can be controlled based on the flag types. For instance, a feature tagged with the `@WorkInProgress` flag type won't be available when the app is released, preventing unintentional feature release.
+
+Explore further flag types like `@FlagType.WorkInProgress`, `@FlagType.Ops`, and `@FlagType.Permission` in [the FlagType documentation section](https://github.com/abema/flagfit#flagfit-default-flag-types).
+
 
 ## Flagfit core features
 
