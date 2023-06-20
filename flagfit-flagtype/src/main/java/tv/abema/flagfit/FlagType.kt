@@ -10,7 +10,6 @@ class FlagType {
    */
   annotation class WorkInProgress(
     val owner: String,
-    val description: String,
     val expiryDate: String,
   )
 
@@ -21,7 +20,6 @@ class FlagType {
    */
   annotation class Experiment(
     val owner: String,
-    val description: String,
     val expiryDate: String,
   )
 
@@ -32,7 +30,6 @@ class FlagType {
    */
   annotation class Ops(
     val owner: String,
-    val description: String,
     val expiryDate: String = "",
   )
 
@@ -43,7 +40,6 @@ class FlagType {
    */
   annotation class Permission(
     val owner: String,
-    val description: String,
     val expiryDate: String = "",
   )
 

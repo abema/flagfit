@@ -1,7 +1,6 @@
 package tv.abema.fragfit
 
 import tv.abema.flagfit.FlagType
-import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 import tv.abema.flagfit.JustFlagSource
@@ -17,7 +16,6 @@ interface SampleFlagService {
   )
   @FlagType.WorkInProgress(
     owner = "Hoge Fuga",
-    description = "hogehoge",
     expiryDate = "2022-12-30"
   )
   fun awesomeWipFeatureEnabled(): Boolean
@@ -28,7 +26,6 @@ interface SampleFlagService {
   )
   @FlagType.Experiment(
     owner = "Hoge Fuga",
-    description = "hogehoge",
     expiryDate = "2322-12-30"
   )
   fun awesomeExperimentFeatureEnabled(): Boolean
@@ -39,7 +36,6 @@ interface SampleFlagService {
   )
   @FlagType.Ops(
     owner = "Hoge Fuga",
-    description = "hogehoge"
   )
   fun awesomeOpsFeatureEnabled(): Boolean
 
@@ -49,7 +45,6 @@ interface SampleFlagService {
   )
   @FlagType.Permission(
     owner = "Hoge Fuga",
-    description = "hogehoge",
     expiryDate = "2022-12-30"
   )
   fun awesomePermissionFeatureEnabled(): Boolean
@@ -60,7 +55,6 @@ interface SampleFlagService {
   )
   @FlagType.WorkInProgress(
     owner = OWNER_NOT_DEFINED,
-    description = DESCRIPTION_NOT_DEFINED,
     expiryDate = EXPIRY_DATE_NOT_DEFINED
   )
   fun awesomeUnknownFeatureEnabled(): Boolean

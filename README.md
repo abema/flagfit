@@ -53,7 +53,6 @@ interface FlagService {
     )
     @FlagType.Experiment(
       owner = "{GitHub UserId}",
-      description = "The flag for this is FeatureFlag for awesome features!",
       // If the flag expires, the lint will warn you.
       expiryDate = "2023-06-13"
     )
@@ -368,7 +367,7 @@ We develop by switching these flags.
 We use the `@WorkInProgress` as Release Toggles when we first start development.  
 If the flag using this `@FlagType.WorkInProgress` is used properly, even if the feature is released, **the false value will be used fixedly**, so the function will not be released by mistake.
 
-When using FlagType, please set `owner`, `description` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
+When using FlagType, please set `owner` and `expiryDate`. [Please see section](./README.md#Lint-check-based-on-expiration-date)
 
 ```kotlin
 @BooleanFlag(
@@ -377,7 +376,6 @@ When using FlagType, please set `owner`, `description` and `expiryDate`. [Please
 )
 @FlagType.WorkInProgress(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -393,7 +391,6 @@ So we use `@FlagType.Experiment`. With it, you can use any flag management tool,
 )
 @FlagType.Experiment(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!",
   expiryDate = "2023-06-13"
 )
 fun awesomeFeatureEnabled(): Boolean
@@ -411,7 +408,6 @@ Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, t
 )
 @FlagType.Ops(
   owner = "{GitHub UserId}",
-  description = "The flag for this is FeatureFlag for awesome features!"
 )
 fun awesomeFeatureEnabled(): Boolean
 ```
@@ -419,7 +415,6 @@ fun awesomeFeatureEnabled(): Boolean
 There may be cases where you do not know the owner or do not want to intentionally generate an error due to not setting a property. In such cases, please set the value as follows
 
 ```kotlin
-import tv.abema.flagfit.FlagfitDeprecatedParams.DESCRIPTION_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
 import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 
@@ -429,7 +424,6 @@ import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
 )
 @FlagType.WorkInProgress(
   owner = OWNER_NOT_DEFINED,
-  description = DESCRIPTION_NOT_DEFINED,
   expiryDate = EXPIRY_DATE_NOT_DEFINED
 )
 fun awesomeUnknownFeatureEnabled(): Boolean
