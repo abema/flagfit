@@ -464,8 +464,8 @@ val flagfit = Flagfit(
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
 | Explanation | Image |
 |-----|-----|
-|When the flag is about to expire|<img width="791" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/8e2d47d1-1c2f-4d9d-a24c-f8481fd4d529">|
-|When the flag has expired|<img width="632" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/06d561ca-b650-4274-a077-a092cad0add8">|
+|When the flag is about to expire|<img width="799" alt="soon" src="https://github.com/abema/flagfit/assets/51113946/7fc78bd3-54ba-44c5-9433-9531563b1388">|
+|When the flag has expired|<img width="687" alt="expired" src="https://github.com/abema/flagfit/assets/51113946/804e49b8-1555-413e-9455-f6bf21b6e622">|
 
 
 ### Automatic issue creation via workflow
