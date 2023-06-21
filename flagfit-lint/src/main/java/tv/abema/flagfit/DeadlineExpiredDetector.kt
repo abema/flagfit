@@ -79,13 +79,13 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
         val message = "The @FlagType.$name created by `owner: $owner` has expired!\n" +
-          "Please consider deleting @FlagType.$name as the expiration date has passed on $expiryDate.\n" +
+          "Please consider deleting `@FlagType.$name` as the expiration date has passed on $expiryDate.\n" +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
         context.report(ISSUE_DEADLINE_EXPIRED, element, location, message)
       } else {
         val message = "The @FlagType.$name `owner: $owner` will expire soon!\n" +
-          "Please consider deleting @FlagType.$name as the expiry date of $expiryDate is scheduled to pass within a week.\n" +
+          "Please consider deleting `@FlagType.$name` as the expiry date of $expiryDate is scheduled to pass within a week.\n" +
           "The flag of `key: ${key}` is used in the $methodName function.\n"
 
         context.report(ISSUE_DEADLINE_SOON, element, location, message)
