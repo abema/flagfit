@@ -15,14 +15,14 @@ class FlagExpirationIssueMaintainer(
 ) {
 
   fun maintain(
-    locationSarif: String,
+    sarifLocation: String,
     labelName: String = "",
-    assignerAlternative: String,
+    fallbackAssigneeWhenOwnerNotPresent: String,
   ) {
     val gitHub = GitHub.connectUsingOAuth(githubToken)
     val repo = gitHub.getRepository(repoName)
     val targetRuleIdList = listOf(FLAGFIT_DEADLINE_SOON, FLAGFIT_DEADLINE_EXPIRED)
-    val file = File(locationSarif)
+    val file = File(sarifLocation)
     val content = file.readText()
     val jsonData = JSONObject(content)
     val runs = jsonData
@@ -90,7 +90,7 @@ class FlagExpirationIssueMaintainer(
         }
 
         val collaborator = repo.collaboratorNames
-        val assignee = if (owner in collaborator) owner else assignerAlternative
+        val assignee = if (owner in collaborator) owner else fallbackAssigneeWhenOwnerNotPresent
 
         if (existingIssue == null) {
           val issue = repo.createIssue(issueTitle)
@@ -136,7 +136,7 @@ FlagExpirationIssueMaintainer(
   repoName = System.getenv("GITHUB_REPOSITORY"),
   headSha = System.getenv("HEAD_SHA")
 ).maintain(
-  locationSarif = "./lint-results.sarif",
+  sarifLocation = "./lint-results.sarif",
   labelName = "featureflag-expiration",
-  assignerAlternative = "{Alternative assignor's GitHub UserId}"
+  fallbackAssigneeWhenOwnerNotPresent = "{Alternative assignor's GitHub UserId}"
 )
