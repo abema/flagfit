@@ -8,35 +8,45 @@ import org.kohsuke.github.GitHub
 import java.io.File
 import java.util.regex.Pattern
 
-class FlagExpirationIssueMaintainer {
+class FlagExpirationIssueMaintainer(
+  private val githubToken: String,
+  private val repoName: String,
+  private val headSha: String,
+) {
 
-  fun maintain() {
-    val githubToken = System.getenv("GITHUB_TOKEN")
-    val repoName = System.getenv("GITHUB_REPOSITORY")
-    val headSha = System.getenv("HEAD_SHA")
+  fun maintain(
+    sarifFilePath: String,
+    labelName: String = "",
+    fallbackAssigneeWhenOwnerNotPresent: String,
+  ) {
     val gitHub = GitHub.connectUsingOAuth(githubToken)
     val repo = gitHub.getRepository(repoName)
     val targetRuleIdList = listOf(FLAGFIT_DEADLINE_SOON, FLAGFIT_DEADLINE_EXPIRED)
-    val file = File("./lint-results.sarif")
+    val file = File(sarifFilePath)
     val content = file.readText()
     val jsonData = JSONObject(content)
     val runs = jsonData
       .getJSONArray("runs")
     val results = runs.getJSONObject(0).getJSONArray("results")
-    val label = "featureflag-expiration"
     val limitIssue = 50
-    val existingIssues = repo.queryIssues()
-      .label(label)
-      .state(GHIssueState.OPEN)
-      .pageSize(limitIssue)
-      .list()
-      .take(limitIssue)
-      .toMutableList()
+    val existingIssues =
+      repo.queryIssues()
+        .apply { if (labelName.isNotEmpty()) label(labelName) }
+        .state(GHIssueState.OPEN)
+        .pageSize(limitIssue)
+        .list()
+        .take(limitIssue)
+        .toMutableList()
+
     if (existingIssues.size >= limitIssue) {
-      throw IllegalStateException(
-        "Found more than $limitIssue Issues with $label set, " +
+      val messageLimitIssue = if (labelName.isNotEmpty()) {
+        "Found more than $limitIssue Issues with $labelName set, " +
           "please make sure it is less than ${limitIssue}!"
-      )
+      } else {
+        "Found more than $limitIssue Issues set, " +
+          "please make sure it is less than ${limitIssue}!"
+      }
+      throw IllegalStateException(messageLimitIssue)
     }
 
     for (i in 0 until results.length()) {
@@ -48,7 +58,7 @@ class FlagExpirationIssueMaintainer {
         val keyPatternRegex = "`key: (.*?)`"
         val ownerPatternRegex = "`owner: (.*?)`"
         val key = matchText(text = message, patternRegex = keyPatternRegex)
-        val assignee = matchText(text = message, patternRegex = ownerPatternRegex)
+        val owner = matchText(text = message, patternRegex = ownerPatternRegex)
 
         val issueTitle = "Expiration status of the $key flag"
         val warningMessage = """
@@ -60,7 +70,7 @@ class FlagExpirationIssueMaintainer {
           |
           |`ruleId: $ruleId`
           |`key: $key`
-          |`owner: $assignee`
+          |`owner: $owner`
           |-->
         """.trimMargin()
         val locations = result.getJSONArray("locations").getJSONObject(0)
@@ -79,11 +89,14 @@ class FlagExpirationIssueMaintainer {
           key == matchText(text = body, patternRegex = keyPatternRegex)
         }
 
+        val collaborator = repo.collaboratorNames
+        val assignee = if (owner in collaborator) owner else fallbackAssigneeWhenOwnerNotPresent
+
         if (existingIssue == null) {
           val issue = repo.createIssue(issueTitle)
             .body(warningMessage)
             .assignee(assignee)
-            .label(label)
+            .apply { if (labelName.isNotEmpty()) label(labelName) }
             .create()
           issue.comment(artifactUri)
           existingIssues.add(issue)
@@ -118,4 +131,12 @@ class FlagExpirationIssueMaintainer {
   }
 }
 
-FlagExpirationIssueMaintainer().maintain()
+FlagExpirationIssueMaintainer(
+  githubToken = System.getenv("GITHUB_TOKEN"),
+  repoName = System.getenv("GITHUB_REPOSITORY"),
+  headSha = System.getenv("HEAD_SHA")
+).maintain(
+  sarifFilePath = "./lint-results.sarif",
+  labelName = "featureflag-expiration",
+  fallbackAssigneeWhenOwnerNotPresent = "{Alternative assignor's GitHub UserId}"
+)
