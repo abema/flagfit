@@ -30,11 +30,11 @@ allprojects {
 ```groovy
 dependencies {
     // Flagfit
-    implementation 'com.github.abema.flagfit:flagfit:1.1.1'
+    implementation 'com.github.abema.flagfit:flagfit:1.1.2'
     // Flagfit flagtype
-    implementation 'com.github.abema.flagfit:flagfit-flagtype:1.1.1'
+    implementation 'com.github.abema.flagfit:flagfit-flagtype:1.1.2'
     // Flagfit lint
-    lintChecks 'com.github.abema.flagfit:flagfit-lint:1.1.1'
+    lintChecks 'com.github.abema.flagfit:flagfit-lint:1.1.2'
 }
 ```
 
