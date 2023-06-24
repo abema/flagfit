@@ -19,6 +19,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   private lateinit var stabBooleanFlag: TestFile
   private lateinit var stabFlagType: TestFile
   private lateinit var stabDeprecatedInfo: TestFile
+  private lateinit var stabExpansionInfo: TestFile
 
   @Before
   fun before() {
@@ -57,6 +58,15 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       }
       """.trimIndent()
     )
+    stabExpansionInfo = kotlin(
+      """
+      package tv.abema.flagfit
+      
+      object FlagfitExpansionParams {
+        const val NO_EXPIRY_DATE = "NO_EXPIRY_DATE"
+      }
+      """.trimIndent()
+    )
   }
 
   @Test
@@ -70,7 +80,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -158,7 +168,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -186,18 +196,19 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
     lint()
       .files(
         stabBooleanFlag,
+        stabExpansionInfo,
         kotlin(
           """
           package tv.abema.flagfit
-
+          
           class FlagType {
             annotation class Ops(
               val owner: String,
-              val expiryDate: String = "",
+              val expiryDate: String,
             )
             annotation class Permission(
               val owner: String,
-              val expiryDate: String = "",
+              val expiryDate: String,
             )
           }
           """.trimIndent()
@@ -207,7 +218,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
+          
           interface Example {
               @BooleanFlag(
                 key = "new-ops-awesome-feature",
@@ -215,6 +227,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Ops(
                 owner = "Hoge Fuga",
+                expiryDate = NO_EXPIRY_DATE
               )
               fun awesomeOpsFeatureEnabled(): Boolean
               @BooleanFlag(
@@ -223,6 +236,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Permission(
                 owner = "Hoge Fuga",
+                expiryDate = NO_EXPIRY_DATE
               )
               fun awesomePermissionFeatureEnabled(): Boolean
           }
@@ -255,7 +269,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.VariationFlag
-
+          
           interface Example {
               @VariationFlag(
                 key = "new-awesome-feature",

@@ -30,7 +30,7 @@ class FlagType {
    */
   annotation class Ops(
     val owner: String,
-    val expiryDate: String = "",
+    val expiryDate: String,
   )
 
   /**
@@ -40,7 +40,7 @@ class FlagType {
    */
   annotation class Permission(
     val owner: String,
-    val expiryDate: String = "",
+    val expiryDate: String,
   )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {

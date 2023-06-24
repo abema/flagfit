@@ -14,6 +14,9 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinUMethod
+import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -56,7 +59,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
-    if (owner == "OWNER_NOT_DEFINED" || expiryDate == "EXPIRY_DATE_NOT_DEFINED") return
+    if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED || expiryDate == NO_EXPIRY_DATE) return
     if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()
       || qualifiedName == "tv.abema.flagfit.FlagType.Permission" && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
