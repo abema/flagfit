@@ -399,15 +399,18 @@ fun awesomeFeatureEnabled(): Boolean
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
 If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
 
-Since `@FlagType.Ops` and `@FlagType.Permission` may be operated indefinitely, there is no need to set `expiryDate`.
+`@FlagType.Ops` and `@FlagType.Permission` may sometimes have no expiry date, so please set them to `NO_EXPIRY_DATE` instead.
 
 ```kotlin
+import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
+
 @BooleanFlag(
   key = "awesome-feature",
   defaultValue = false
 )
 @FlagType.Ops(
   owner = "{GitHub UserId}",
+  expiryDate = NO_EXPIRY_DATE
 )
 fun awesomeFeatureEnabled(): Boolean
 ```
