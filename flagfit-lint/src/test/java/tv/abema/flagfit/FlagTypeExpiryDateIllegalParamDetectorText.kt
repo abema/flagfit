@@ -39,23 +39,23 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
           
           interface Example {
               @BooleanFlag(
-                key = "new-ops-awesome-feature",
+                key = "new-wip-awesome-feature",
                 defaultValue = false
               )
               @FlagType.WorkInProgress(
                 owner = "Hoge Fuga",
                 expiryDate = EXPIRY_DATE_INFINITE
               )
-              fun awesomeOpsFeatureEnabled(): Boolean
+              fun awesomeWipFeatureEnabled(): Boolean
               @BooleanFlag(
-                key = "new-permission-awesome-feature",
+                key = "new-experiment-awesome-feature",
                 defaultValue = false
               )
               @FlagType.Experiment(
                 owner = OWNER_NOT_DEFINED,
                 expiryDate = EXPIRY_DATE_INFINITE
               )
-              fun awesomePermissionFeatureEnabled(): Boolean
+              fun awesomeExperimentFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
@@ -79,7 +79,7 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
   }
 
   @Test
-  fun testIllegalExpireDateFormatWarning() {
+  fun testNoExpireParamNoWarning() {
     lint()
       .files(
         stabBooleanFlag,
@@ -97,11 +97,54 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
                 key = "new-ops-awesome-feature",
                 defaultValue = false
               )
-              @FlagType.WorkInProgress(
+              @FlagType.Ops(
+                owner = "Hoge Fuga",
+                expiryDate = EXPIRY_DATE_INFINITE
+              )
+              fun awesomeOpsFeatureEnabled(): Boolean
+              @BooleanFlag(
+                key = "new-permission-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Permission(
+                owner = OWNER_NOT_DEFINED,
+                expiryDate = EXPIRY_DATE_INFINITE
+              )
+              fun awesomePermissionFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
+  }
+
+  @Test
+  fun testIllegalExpireDateFormatWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Ops(
                 owner = "Hoge Fuga",
                 expiryDate = "2023-12-100"
               )
-              fun awesomeOpsFeatureEnabled(): Boolean
+              fun awesomeFeatureEnabled(): Boolean
           }
           """.trimIndent()
         )
@@ -113,11 +156,45 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
         """
         src/foo/Example.kt:12: Error: The value of expireDate is not in the correct date format.
         Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalDate]
-            @FlagType.WorkInProgress(
+            @FlagType.Ops(
             ^
         1 errors, 0 warnings
         """.trimIndent()
       )
+  }
+
+  @Test
+  fun testExpireDateFormatNoWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.WorkInProgress(
+                owner = "Hoge Fuga",
+                expiryDate = "2023-12-10"
+              )
+              fun awesomeFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
   }
 
   override fun getDetector(): Detector = FlagTypeExpiryDateIllegalParamDetector()

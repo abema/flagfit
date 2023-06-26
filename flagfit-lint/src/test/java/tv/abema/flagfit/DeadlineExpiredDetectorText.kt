@@ -261,7 +261,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
                 key = "new-awesome-feature",
                 defaultValue = false
               )
-              @FlagType.Experiment(
+              @FlagType.Ops(
                 owner = OWNER_NOT_DEFINED,
                 expiryDate = EXPIRY_DATE_NOT_DEFINED,
               )
