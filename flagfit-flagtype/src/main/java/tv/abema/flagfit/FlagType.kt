@@ -30,7 +30,7 @@ class FlagType {
    */
   annotation class Ops(
     val owner: String,
-    val expiryDate: String = "",
+    val expiryDate: String,
   )
 
   /**
@@ -40,7 +40,7 @@ class FlagType {
    */
   annotation class Permission(
     val owner: String,
-    val expiryDate: String = "",
+    val expiryDate: String,
   )
 
   class WorkInProgressAnnotationAdapter : AnnotationAdapter<WorkInProgress> {
@@ -112,6 +112,13 @@ class FlagType {
   }
 
   companion object {
+    const val EXPIRY_DATE_INFINITE = "EXPIRY_DATE_INFINITE"
+
+    @Deprecated("FlagType should have the actual owner set")
+    const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
+
+    @Deprecated("FlagType should have the actual expiry date set")
+    const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
     fun annotationAdapters() = listOf(
       WorkInProgressAnnotationAdapter(),
       ExperimentAnnotationAdapter(),

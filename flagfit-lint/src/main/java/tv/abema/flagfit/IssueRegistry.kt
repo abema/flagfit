@@ -22,6 +22,8 @@ internal class IssueRegistry : IssueRegistry() {
   override val issues: List<Issue>
     get() = listOf(
       DeadlineExpiredDetector.ISSUE_DEADLINE_EXPIRED,
-      DeadlineExpiredDetector.ISSUE_DEADLINE_SOON
+      DeadlineExpiredDetector.ISSUE_DEADLINE_SOON,
+      FlagTypeExpiryDateIllegalParamDetector.ISSUE_ILLEGAL_NO_EXPIRE_PARAM,
+      FlagTypeExpiryDateIllegalParamDetector.ISSUE_ILLEGAL_DATE
     )
 }

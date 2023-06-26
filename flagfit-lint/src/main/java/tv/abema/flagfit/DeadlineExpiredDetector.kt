@@ -14,19 +14,29 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinUMethod
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_BOOLEAN_FLAG
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_OPS
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_PERMISSION
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_VARIATION_FLAG
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_WIP
+import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.EnumSet
 
 class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
 
   override fun applicableAnnotations(): List<String> {
     return listOf(
-      "tv.abema.flagfit.FlagType.WorkInProgress",
-      "tv.abema.flagfit.FlagType.Experiment",
-      "tv.abema.flagfit.FlagType.Ops",
-      "tv.abema.flagfit.FlagType.Permission",
+      PACKAGE_PATH_WIP,
+      PACKAGE_PATH_EXPERIMENT,
+      PACKAGE_PATH_OPS,
+      PACKAGE_PATH_PERMISSION,
     )
   }
 
@@ -34,7 +44,7 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     return type == AnnotationUsageType.DEFINITION || super.isApplicableAnnotationUsage(type)
   }
 
-  @Suppress("NewApi", "UnstableApiUsage")
+  @Suppress("NewApi", "UnstableApiUsage", "DEPRECATION")
   override fun visitAnnotationUsage(
     context: JavaContext,
     element: UElement,
@@ -50,33 +60,35 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         withZone(ZoneId.of(timeZoneId))
       }
     }
-    val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
-    if (owner == "OWNER_NOT_DEFINED" || expiryDate == "EXPIRY_DATE_NOT_DEFINED") return
-    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()
-      || qualifiedName == "tv.abema.flagfit.FlagType.Permission" && expiryDate.isEmpty()) return
+    val location = context.getLocation(element)
+    if (expiryDate == EXPIRY_DATE_INFINITE) return
+    if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
       LocalDate.parse(currentTime, dateTimeFormatter)
     }
-    val expiryLocalDate = LocalDate.parse(expiryDate, dateTimeFormatter)
+    val expiryLocalDate = try {
+      LocalDate.parse(expiryDate, dateTimeFormatter)
+    } catch (ex: DateTimeParseException) {
+      return
+    }
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
     val uastParent = (element.uastParent as? KotlinUMethod) ?: return
     val methodName = uastParent.name
     val key = uastParent.annotations
       .first {
-        it.qualifiedName == "tv.abema.flagfit.annotation.BooleanFlag" ||
-          it.qualifiedName == "tv.abema.flagfit.annotation.VariationFlag"
+        it.qualifiedName == PACKAGE_PATH_BOOLEAN_FLAG ||
+          it.qualifiedName == PACKAGE_PATH_VARIATION_FLAG
       }
       .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
-      val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
         val message = "The @FlagType.$name created by `owner: $owner` has expired!\n" +
           "Please consider deleting `@FlagType.$name` as the expiration date has passed on $expiryDate.\n" +

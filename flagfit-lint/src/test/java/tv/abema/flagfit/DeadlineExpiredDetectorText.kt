@@ -18,45 +18,11 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
   private lateinit var stabBooleanFlag: TestFile
   private lateinit var stabFlagType: TestFile
-  private lateinit var stabDeprecatedInfo: TestFile
 
   @Before
   fun before() {
-    stabBooleanFlag = kotlin(
-      """
-      package tv.abema.flagfit.annotation
-      
-      annotation class BooleanFlag(
-         val key: String,
-         val defaultValue: Boolean
-       )
-      """.trimIndent()
-    )
-    stabFlagType = kotlin(
-      """
-      package tv.abema.flagfit
-      
-      class FlagType {
-        annotation class Experiment(
-          val owner: String,
-          val expiryDate: String,
-        )
-      }
-      """.trimIndent()
-    )
-    stabDeprecatedInfo = kotlin(
-      """
-      package tv.abema.flagfit
-      
-      object FlagfitDeprecatedParams {
-        @Deprecated("Flag with no assigned owner")
-        const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
-      
-        @Deprecated("Flag without an expiry date")
-        const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
-      }
-      """.trimIndent()
-    )
+    stabBooleanFlag = KotlinStabFiles.stabBooleanFlag
+    stabFlagType = KotlinStabFiles.stabFlagType
   }
 
   @Test
@@ -70,7 +36,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -158,7 +124,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
@@ -182,32 +148,18 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   }
 
   @Test
-  fun testNoExpiredDateFlagTypeNoExpiryWarning() {
+  fun testNoExpiredDateFlagTypeInfiniteWarning() {
     lint()
       .files(
         stabBooleanFlag,
-        kotlin(
-          """
-          package tv.abema.flagfit
-
-          class FlagType {
-            annotation class Ops(
-              val owner: String,
-              val expiryDate: String = "",
-            )
-            annotation class Permission(
-              val owner: String,
-              val expiryDate: String = "",
-            )
-          }
-          """.trimIndent()
-        ),
+        stabFlagType,
         kotlin(
           """
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+          
           interface Example {
               @BooleanFlag(
                 key = "new-ops-awesome-feature",
@@ -215,6 +167,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Ops(
                 owner = "Hoge Fuga",
+                expiryDate = EXPIRY_DATE_INFINITE
               )
               fun awesomeOpsFeatureEnabled(): Boolean
               @BooleanFlag(
@@ -223,6 +176,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
               )
               @FlagType.Permission(
                 owner = "Hoge Fuga",
+                expiryDate = EXPIRY_DATE_INFINITE
               )
               fun awesomePermissionFeatureEnabled(): Boolean
           }
@@ -255,7 +209,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.VariationFlag
-
+          
           interface Example {
               @VariationFlag(
                 key = "new-awesome-feature",
@@ -294,21 +248,20 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .files(
         stabBooleanFlag,
         stabFlagType,
-        stabDeprecatedInfo,
         kotlin(
           """
           package foo
           import tv.abema.flagfit.FlagType
           import tv.abema.flagfit.annotation.BooleanFlag
-          import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
-          import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
           
           interface Example {
               @BooleanFlag(
                 key = "new-awesome-feature",
                 defaultValue = false
               )
-              @FlagType.Experiment(
+              @FlagType.Ops(
                 owner = OWNER_NOT_DEFINED,
                 expiryDate = EXPIRY_DATE_NOT_DEFINED,
               )
@@ -328,7 +281,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
       ISSUE_DEADLINE_EXPIRED,
-      ISSUE_DEADLINE_SOON
+      ISSUE_DEADLINE_SOON,
     )
   }
 }
