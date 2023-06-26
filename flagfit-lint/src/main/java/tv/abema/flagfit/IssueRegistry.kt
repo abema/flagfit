@@ -23,6 +23,7 @@ internal class IssueRegistry : IssueRegistry() {
     get() = listOf(
       DeadlineExpiredDetector.ISSUE_DEADLINE_EXPIRED,
       DeadlineExpiredDetector.ISSUE_DEADLINE_SOON,
-      IllegalParamDetector.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
+      IllegalParamDetector.ISSUE_ILLEGAL_NO_EXPIRE_PARAM,
+      IllegalParamDetector.ISSUE_ILLEGAL_DATE
     )
 }

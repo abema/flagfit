@@ -12,6 +12,9 @@ import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import org.jetbrains.uast.UElement
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.EnumSet
 
 class IllegalParamDetector : Detector(), SourceCodeScanner {
@@ -53,6 +56,21 @@ class IllegalParamDetector : Detector(), SourceCodeScanner {
         AnnotationPackagePath.PACKAGE_PATH_OPS, AnnotationPackagePath.PACKAGE_PATH_PERMISSION -> return
       }
     }
+    if (!isDateFormatValid(expiryDate)) {
+      val message = "The value of expireDate is not in the correct date format.\n" +
+      "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+      context.report(ISSUE_ILLEGAL_DATE, element, location, message)
+    }
+  }
+
+  private fun isDateFormatValid(dateString: String): Boolean {
+    val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+    return try {
+      LocalDate.parse(dateString, formatter)
+      true
+    } catch (ex: DateTimeParseException) {
+      false
+    }
   }
 
   companion object {
@@ -62,6 +80,18 @@ class IllegalParamDetector : Detector(), SourceCodeScanner {
       explanation = "Do not set NO_EXPIRE_DATE for @FlagType.WorkInProgress and @FlagType.Experiment...",
       category = Category.PRODUCTIVITY,
       priority = 4,
+      severity = Severity.ERROR,
+      implementation = Implementation(
+        IllegalParamDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
+    val ISSUE_ILLEGAL_DATE = Issue.create(
+      id = "FlagfitIllegalDate",
+      briefDescription = "The argument of expireDate is illigal.",
+      explanation = "The value of expireDate should be in the format \"yyyy-MM-dd\"",
+      category = Category.PRODUCTIVITY,
+      priority = 6,
       severity = Severity.ERROR,
       implementation = Implementation(
         IllegalParamDetector::class.java,

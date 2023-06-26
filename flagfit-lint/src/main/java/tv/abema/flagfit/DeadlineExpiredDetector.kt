@@ -26,6 +26,7 @@ import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.EnumSet
 
 class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
@@ -72,7 +73,11 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     } else {
       LocalDate.parse(currentTime, dateTimeFormatter)
     }
-    val expiryLocalDate = LocalDate.parse(expiryDate, dateTimeFormatter)
+    val expiryLocalDate = try {
+      LocalDate.parse(expiryDate, dateTimeFormatter)
+    } catch (ex: DateTimeParseException) {
+      return
+    }
     val soonExpiryLocalDate = expiryLocalDate.minusDays(7)
     val uastParent = (element.uastParent as? KotlinUMethod) ?: return
     val methodName = uastParent.name
