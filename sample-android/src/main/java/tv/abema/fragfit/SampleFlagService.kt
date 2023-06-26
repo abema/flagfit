@@ -1,8 +1,8 @@
 package tv.abema.fragfit
 
 import tv.abema.flagfit.FlagType
-import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
-import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
+import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
 import tv.abema.flagfit.JustFlagSource
 import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
@@ -36,7 +36,7 @@ interface SampleFlagService {
   )
   @FlagType.Ops(
     owner = "Hoge Fuga",
-    expiryDate = NO_EXPIRY_DATE
+    expiryDate = EXPIRY_DATE_INFINITE
   )
   fun awesomeOpsFeatureEnabled(): Boolean
 
