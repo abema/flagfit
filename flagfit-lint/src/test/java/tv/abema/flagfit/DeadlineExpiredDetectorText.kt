@@ -11,7 +11,6 @@ import org.junit.runners.JUnit4
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.CURRENT_TIME
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
-import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.TIME_ZONE
 
 @RunWith(JUnit4::class)
@@ -22,47 +21,8 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
 
   @Before
   fun before() {
-    stabBooleanFlag = kotlin(
-      """
-      package tv.abema.flagfit.annotation
-      
-      annotation class BooleanFlag(
-         val key: String,
-         val defaultValue: Boolean
-       )
-      """.trimIndent()
-    )
-    stabFlagType = kotlin(
-      """
-      package tv.abema.flagfit
-      
-      class FlagType {
-        annotation class WorkInProgress(
-          val owner: String,
-          val expiryDate: String,
-        )
-        annotation class Experiment(
-          val owner: String,
-          val expiryDate: String,
-        )
-        annotation class Ops(
-          val owner: String,
-          val expiryDate: String,
-        )
-        annotation class Permission(
-            val owner: String,
-            val expiryDate: String,
-          )
-        companion object {
-            const val EXPIRY_DATE_INFINITE = "EXPIRY_DATE_INFINITE"
-            @Deprecated("Flag with no assigned owner")
-            const val OWNER_NOT_DEFINED = "OWNER_NOT_DEFINED"
-            @Deprecated("Flag without an expiry date")
-            const val EXPIRY_DATE_NOT_DEFINED = "EXPIRY_DATE_NOT_DEFINED"
-          }
-      }
-      """.trimIndent()
-    )
+    stabBooleanFlag = KotlinStabFiles.stabBooleanFlag
+    stabFlagType = KotlinStabFiles.stabFlagType
   }
 
   @Test
@@ -316,68 +276,12 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .expectClean()
   }
 
-  @Test
-  fun testIllegalNoExpireParamWarning() {
-    lint()
-      .files(
-        stabBooleanFlag,
-        stabFlagType,
-        kotlin(
-          """
-          package foo
-          import tv.abema.flagfit.FlagType
-          import tv.abema.flagfit.annotation.BooleanFlag
-          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
-          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
-          
-          interface Example {
-              @BooleanFlag(
-                key = "new-ops-awesome-feature",
-                defaultValue = false
-              )
-              @FlagType.WorkInProgress(
-                owner = "Hoge Fuga",
-                expiryDate = EXPIRY_DATE_INFINITE
-              )
-              fun awesomeOpsFeatureEnabled(): Boolean
-              @BooleanFlag(
-                key = "new-permission-awesome-feature",
-                defaultValue = false
-              )
-              @FlagType.Experiment(
-                owner = OWNER_NOT_DEFINED,
-                expiryDate = EXPIRY_DATE_INFINITE
-              )
-              fun awesomePermissionFeatureEnabled(): Boolean
-          }
-          """.trimIndent()
-        )
-      )
-      .issues(*issues.toTypedArray())
-      .allowMissingSdk()
-      .run()
-      .expect(
-        """
-        src/foo/Example.kt:12: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
-        Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
-            @FlagType.WorkInProgress(
-            ^
-        src/foo/Example.kt:21: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
-        Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
-            @FlagType.Experiment(
-            ^
-        2 errors, 0 warnings
-        """.trimIndent()
-      )
-  }
-
   override fun getDetector(): Detector = DeadlineExpiredDetector()
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
       ISSUE_DEADLINE_EXPIRED,
       ISSUE_DEADLINE_SOON,
-      ISSUE_ILLEGAL_NO_EXPIRE_PARAM
     )
   }
 }

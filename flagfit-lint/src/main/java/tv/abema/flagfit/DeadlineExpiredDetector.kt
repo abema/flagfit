@@ -14,6 +14,12 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.StringOption
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinUMethod
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_BOOLEAN_FLAG
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_OPS
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_PERMISSION
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_VARIATION_FLAG
+import tv.abema.flagfit.AnnotationPackagePath.PACKAGE_PATH_WIP
 import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
 import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
 import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
@@ -53,25 +59,13 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         withZone(ZoneId.of(timeZoneId))
       }
     }
-    val qualifiedName = annotationInfo.qualifiedName
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     val location = context.getLocation(element)
-    if (expiryDate == EXPIRY_DATE_INFINITE) {
-      when (qualifiedName) {
-        PACKAGE_PATH_WIP, PACKAGE_PATH_EXPERIMENT -> {
-          val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
-            "Please set the expiration date in the following format: \"yyyy-mm-dd\""
-          context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
-          return
-        }
-
-        PACKAGE_PATH_OPS, PACKAGE_PATH_PERMISSION -> return
-      }
-    }
+    if (expiryDate == EXPIRY_DATE_INFINITE) return
     if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
@@ -107,12 +101,6 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
   }
 
   companion object {
-    const val PACKAGE_PATH_WIP = "tv.abema.flagfit.FlagType.WorkInProgress"
-    const val PACKAGE_PATH_EXPERIMENT = "tv.abema.flagfit.FlagType.Experiment"
-    const val PACKAGE_PATH_OPS = "tv.abema.flagfit.FlagType.Ops"
-    const val PACKAGE_PATH_PERMISSION = "tv.abema.flagfit.FlagType.Permission"
-    const val PACKAGE_PATH_BOOLEAN_FLAG = "tv.abema.flagfit.annotation.BooleanFlag"
-    const val PACKAGE_PATH_VARIATION_FLAG = "tv.abema.flagfit.annotation.VariationFlag"
     val TIME_ZONE = StringOption("timeZone", "Your current time zone")
     val CURRENT_TIME = StringOption(
       "currentTime",
@@ -142,17 +130,5 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     ).setOptions(listOf(TIME_ZONE, CURRENT_TIME))
-    val ISSUE_ILLEGAL_NO_EXPIRE_PARAM = Issue.create(
-      id = "FlagfitIllegalNoExpireParam",
-      briefDescription = "The argument of expireDate is illigal.",
-      explanation = "Do not set NO_EXPIRE_DATE for @FlagType.WorkInProgress and @FlagType.Experiment...",
-      category = Category.PRODUCTIVITY,
-      priority = 4,
-      severity = Severity.ERROR,
-      implementation = Implementation(
-        DeadlineExpiredDetector::class.java,
-        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-      )
-    )
   }
 }
