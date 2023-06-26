@@ -399,10 +399,10 @@ fun awesomeFeatureEnabled(): Boolean
 Then, in the operation stage, it can be implemented using `@FlagType.Ops` and OpsFlagSource as well.  
 If you implement `ExperimentFlagSource` and `OpsFlagSource`, you can use one flag management tool either.
 
-`@FlagType.Ops` and `@FlagType.Permission` may sometimes have no expiry date, so please set them to `NO_EXPIRY_DATE` instead.
+`@FlagType.Ops` and `@FlagType.Permission` may sometimes have no expiry date, so please set them to `EXPIRY_DATE_INFINITEE` instead.
 
 ```kotlin
-import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
+import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
 
 @BooleanFlag(
   key = "awesome-feature",
@@ -410,7 +410,7 @@ import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
 )
 @FlagType.Ops(
   owner = "{GitHub UserId}",
-  expiryDate = NO_EXPIRY_DATE
+  expiryDate = EXPIRY_DATE_INFINITE
 )
 fun awesomeFeatureEnabled(): Boolean
 ```
@@ -418,8 +418,8 @@ fun awesomeFeatureEnabled(): Boolean
 There may be cases where you do not know the owner or do not want to intentionally generate an error due to not setting a property. In such cases, please set the value as follows
 
 ```kotlin
-import tv.abema.flagfit.FlagfitDeprecatedParams.EXPIRY_DATE_NOT_DEFINED
-import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
+import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
 
 @BooleanFlag(
   key = "new-awesome-unknown-feature",
