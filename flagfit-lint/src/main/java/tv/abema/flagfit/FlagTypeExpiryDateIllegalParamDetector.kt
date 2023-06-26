@@ -8,6 +8,7 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Implementation
 import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
+import com.android.tools.lint.detector.api.Location
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
@@ -45,21 +46,32 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     if (expiryDate == FlagType.EXPIRY_DATE_INFINITE) {
-      when (qualifiedName) {
-        AnnotationPackagePath.PACKAGE_PATH_WIP, AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT -> {
-          val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
-            "Please set the expiration date in the following format: \"yyyy-mm-dd\""
-          context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
-          return
-        }
-
-        AnnotationPackagePath.PACKAGE_PATH_OPS, AnnotationPackagePath.PACKAGE_PATH_PERMISSION -> return
-      }
+      reportInfiniteExpiryDateErrorIfNeeded(qualifiedName, context, element, location)
+      return
     }
     if (!isDateFormatValid(expiryDate)) {
       val message = "The value of expireDate is not in the correct date format.\n" +
-      "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+        "Please set the expiration date in the following format: \"yyyy-mm-dd\""
       context.report(ISSUE_ILLEGAL_DATE, element, location, message)
+    }
+  }
+
+  private fun reportInfiniteExpiryDateErrorIfNeeded(
+    qualifiedName: String,
+    context: JavaContext,
+    element: UElement,
+    location: Location,
+  ) {
+    when (qualifiedName) {
+      AnnotationPackagePath.PACKAGE_PATH_WIP, AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT -> {
+        val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
+          "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+        context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
+      }
+
+      AnnotationPackagePath.PACKAGE_PATH_OPS, AnnotationPackagePath.PACKAGE_PATH_PERMISSION -> {
+        // do nothing
+      }
     }
   }
 
