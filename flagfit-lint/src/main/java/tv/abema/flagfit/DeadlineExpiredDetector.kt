@@ -26,10 +26,10 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
 
   override fun applicableAnnotations(): List<String> {
     return listOf(
-      "tv.abema.flagfit.FlagType.WorkInProgress",
-      "tv.abema.flagfit.FlagType.Experiment",
-      "tv.abema.flagfit.FlagType.Ops",
-      "tv.abema.flagfit.FlagType.Permission",
+      PACKAGE_PATH_WIP,
+      PACKAGE_PATH_EXPERIMENT,
+      PACKAGE_PATH_OPS,
+      PACKAGE_PATH_PERMISSION,
     )
   }
 
@@ -62,19 +62,19 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val location = context.getLocation(element)
     if (expiryDate == NO_EXPIRY_DATE) {
       when (qualifiedName) {
-        "tv.abema.flagfit.FlagType.WorkInProgress", "tv.abema.flagfit.FlagType.Experiment" -> {
+        PACKAGE_PATH_WIP, PACKAGE_PATH_EXPERIMENT -> {
           val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
             "Please set the expiration date in the following format: \"yyyy-mm-dd\""
           context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
           return
         }
 
-        "tv.abema.flagfit.FlagType.Ops", "tv.abema.flagfit.FlagType.Permission" -> return
+        PACKAGE_PATH_OPS, PACKAGE_PATH_PERMISSION -> return
       }
     }
     if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED) return
-    if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()
-      || qualifiedName == "tv.abema.flagfit.FlagType.Permission" && expiryDate.isEmpty()) return
+    if (qualifiedName == PACKAGE_PATH_OPS && expiryDate.isEmpty()
+      || qualifiedName == PACKAGE_PATH_PERMISSION && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
       LocalDate.now()
     } else {
@@ -86,8 +86,8 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     val methodName = uastParent.name
     val key = uastParent.annotations
       .first {
-        it.qualifiedName == "tv.abema.flagfit.annotation.BooleanFlag" ||
-          it.qualifiedName == "tv.abema.flagfit.annotation.VariationFlag"
+        it.qualifiedName == PACKAGE_PATH_BOOLEAN_FLAG ||
+          it.qualifiedName == PACKAGE_PATH_VARIATION_FLAG
       }
       .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
@@ -109,6 +109,12 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
   }
 
   companion object {
+    const val PACKAGE_PATH_WIP = "tv.abema.flagfit.FlagType.WorkInProgress"
+    const val PACKAGE_PATH_EXPERIMENT = "tv.abema.flagfit.FlagType.Experiment"
+    const val PACKAGE_PATH_OPS = "tv.abema.flagfit.FlagType.Ops"
+    const val PACKAGE_PATH_PERMISSION = "tv.abema.flagfit.FlagType.Permission"
+    const val PACKAGE_PATH_BOOLEAN_FLAG = "tv.abema.flagfit.annotation.BooleanFlag"
+    const val PACKAGE_PATH_VARIATION_FLAG = "tv.abema.flagfit.annotation.VariationFlag"
     val TIME_ZONE = StringOption("timeZone", "Your current time zone")
     val CURRENT_TIME = StringOption(
       "currentTime",
