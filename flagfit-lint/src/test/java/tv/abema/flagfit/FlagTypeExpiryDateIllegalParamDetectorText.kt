@@ -8,11 +8,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import tv.abema.flagfit.IllegalParamDetector.Companion.ISSUE_ILLEGAL_DATE
-import tv.abema.flagfit.IllegalParamDetector.Companion.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
+import tv.abema.flagfit.FlagTypeExpiryDateIllegalParamDetector.Companion.ISSUE_ILLEGAL_DATE
+import tv.abema.flagfit.FlagTypeExpiryDateIllegalParamDetector.Companion.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
 
 @RunWith(JUnit4::class)
-class IllegalParamDetectorText : LintDetectorTest() {
+class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
 
   private lateinit var stabBooleanFlag: TestFile
   private lateinit var stabFlagType: TestFile
@@ -120,7 +120,7 @@ class IllegalParamDetectorText : LintDetectorTest() {
       )
   }
 
-  override fun getDetector(): Detector = IllegalParamDetector()
+  override fun getDetector(): Detector = FlagTypeExpiryDateIllegalParamDetector()
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(

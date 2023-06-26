@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.EnumSet
 
-class IllegalParamDetector : Detector(), SourceCodeScanner {
+class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
 
   override fun applicableAnnotations(): List<String> {
     return listOf(
@@ -82,7 +82,7 @@ class IllegalParamDetector : Detector(), SourceCodeScanner {
       priority = 4,
       severity = Severity.ERROR,
       implementation = Implementation(
-        IllegalParamDetector::class.java,
+        FlagTypeExpiryDateIllegalParamDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     )
@@ -94,7 +94,7 @@ class IllegalParamDetector : Detector(), SourceCodeScanner {
       priority = 6,
       severity = Severity.ERROR,
       implementation = Implementation(
-        IllegalParamDetector::class.java,
+        FlagTypeExpiryDateIllegalParamDetector::class.java,
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     )
