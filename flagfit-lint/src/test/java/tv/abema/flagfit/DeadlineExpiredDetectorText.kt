@@ -11,6 +11,7 @@ import org.junit.runners.JUnit4
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.CURRENT_TIME
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_EXPIRED
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_DEADLINE_SOON
+import tv.abema.flagfit.DeadlineExpiredDetector.Companion.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
 import tv.abema.flagfit.DeadlineExpiredDetector.Companion.TIME_ZONE
 
 @RunWith(JUnit4::class)
@@ -38,10 +39,22 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       package tv.abema.flagfit
       
       class FlagType {
+        annotation class WorkInProgress(
+          val owner: String,
+          val expiryDate: String,
+        )
         annotation class Experiment(
           val owner: String,
           val expiryDate: String,
         )
+        annotation class Ops(
+          val owner: String,
+          val expiryDate: String,
+        )
+        annotation class Permission(
+            val owner: String,
+            val expiryDate: String,
+          )
       }
       """.trimIndent()
     )
@@ -197,22 +210,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .files(
         stabBooleanFlag,
         stabExpansionInfo,
-        kotlin(
-          """
-          package tv.abema.flagfit
-          
-          class FlagType {
-            annotation class Ops(
-              val owner: String,
-              val expiryDate: String,
-            )
-            annotation class Permission(
-              val owner: String,
-              val expiryDate: String,
-            )
-          }
-          """.trimIndent()
-        ),
+        stabFlagType,
         kotlin(
           """
           package foo
@@ -337,12 +335,70 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
       .expectClean()
   }
 
+  @Test
+  fun testIllegalNoExpireParamWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        stabExpansionInfo,
+        stabDeprecatedInfo,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagfitDeprecatedParams.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagfitExpansionParams.NO_EXPIRY_DATE
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-ops-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.WorkInProgress(
+                owner = "Hoge Fuga",
+                expiryDate = NO_EXPIRY_DATE
+              )
+              fun awesomeOpsFeatureEnabled(): Boolean
+              @BooleanFlag(
+                key = "new-permission-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Experiment(
+                owner = OWNER_NOT_DEFINED,
+                expiryDate = NO_EXPIRY_DATE
+              )
+              fun awesomePermissionFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expect(
+        """
+        src/foo/Example.kt:12: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
+        Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
+            @FlagType.WorkInProgress(
+            ^
+        src/foo/Example.kt:21: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
+        Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
+            @FlagType.Experiment(
+            ^
+        2 errors, 0 warnings
+        """.trimIndent()
+      )
+  }
+
   override fun getDetector(): Detector = DeadlineExpiredDetector()
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
       ISSUE_DEADLINE_EXPIRED,
-      ISSUE_DEADLINE_SOON
+      ISSUE_DEADLINE_SOON,
+      ISSUE_ILLEGAL_NO_EXPIRE_PARAM
     )
   }
 }

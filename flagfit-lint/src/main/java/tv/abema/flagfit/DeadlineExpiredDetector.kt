@@ -59,7 +59,20 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
-    if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED || expiryDate == NO_EXPIRY_DATE) return
+    val location = context.getLocation(element)
+    if (expiryDate == NO_EXPIRY_DATE) {
+      when (qualifiedName) {
+        "tv.abema.flagfit.FlagType.WorkInProgress", "tv.abema.flagfit.FlagType.Experiment" -> {
+          val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
+            "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+          context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
+          return
+        }
+
+        "tv.abema.flagfit.FlagType.Ops", "tv.abema.flagfit.FlagType.Permission" -> return
+      }
+    }
+    if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED) return
     if (qualifiedName == "tv.abema.flagfit.FlagType.Ops" && expiryDate.isEmpty()
       || qualifiedName == "tv.abema.flagfit.FlagType.Permission" && expiryDate.isEmpty()) return
     val currentLocalDate = if (currentTime.isNullOrEmpty()) {
@@ -79,7 +92,6 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
       .parameterList.attributes.first { it.name == "key" }.value?.text
     if (currentLocalDate.isAfter(soonExpiryLocalDate)) {
       val name = annotationInfo.qualifiedName.substringAfterLast('.')
-      val location = context.getLocation(element)
       if (currentLocalDate.isAfter(expiryLocalDate)) {
         val message = "The @FlagType.$name created by `owner: $owner` has expired!\n" +
           "Please consider deleting `@FlagType.$name` as the expiration date has passed on $expiryDate.\n" +
@@ -126,5 +138,17 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
         EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
       )
     ).setOptions(listOf(TIME_ZONE, CURRENT_TIME))
+    val ISSUE_ILLEGAL_NO_EXPIRE_PARAM = Issue.create(
+      id = "FlagfitIllegalNoExpireParam",
+      briefDescription = "The argument of expireDate is illigal.",
+      explanation = "Do not set NO_EXPIRE_DATE for @FlagType.WorkInProgress and @FlagType.Experiment...",
+      category = Category.PRODUCTIVITY,
+      priority = 4,
+      severity = Severity.ERROR,
+      implementation = Implementation(
+        DeadlineExpiredDetector::class.java,
+        EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
+      )
+    )
   }
 }
