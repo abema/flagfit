@@ -49,6 +49,7 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
       reportInfiniteExpiryDateErrorIfNeeded(qualifiedName, context, element, location)
       return
     }
+    if (expiryDate == FlagType.EXPIRY_DATE_NOT_DEFINED) return
     if (!isDateFormatValid(expiryDate)) {
       val message = "The value of expireDate is not in the correct date format.\n" +
         "Please set the expiration date in the following format: \"yyyy-mm-dd\""
