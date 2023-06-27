@@ -43,12 +43,15 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
     val qualifiedName = annotationInfo.qualifiedName
     val location = context.getLocation(element)
     val annotationAttributes = annotationInfo.annotation.attributeValues
+    val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
+      ?: ""
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
       ?.evaluate() as String?) ?: ""
     if (expiryDate == FlagType.EXPIRY_DATE_INFINITE) {
       reportInfiniteExpiryDateErrorIfNeeded(qualifiedName, context, element, location)
       return
     }
+    if (owner == FlagType.OWNER_NOT_DEFINED || expiryDate == FlagType.EXPIRY_DATE_NOT_DEFINED) return
     if (!isDateFormatValid(expiryDate)) {
       val message = "The value of expireDate is not in the correct date format.\n" +
         "Please set the expiration date in the following format: \"yyyy-mm-dd\""

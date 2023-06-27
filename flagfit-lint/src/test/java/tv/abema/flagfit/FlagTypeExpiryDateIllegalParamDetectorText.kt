@@ -197,6 +197,40 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
       .expectClean()
   }
 
+  @Test
+  fun testDeprecatedFlagTypeNoWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.Ops(
+                owner = OWNER_NOT_DEFINED,
+                expiryDate = EXPIRY_DATE_NOT_DEFINED,
+              )
+              fun awesomeOpsFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
+  }
+
   override fun getDetector(): Detector = FlagTypeExpiryDateIllegalParamDetector()
 
   override fun getIssues(): MutableList<Issue> {
