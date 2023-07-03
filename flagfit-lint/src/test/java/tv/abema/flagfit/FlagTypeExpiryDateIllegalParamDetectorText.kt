@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import tv.abema.flagfit.FlagTypeExpiryDateIllegalParamDetector.Companion.ISSUE_ILLEGAL_DATE
-import tv.abema.flagfit.FlagTypeExpiryDateIllegalParamDetector.Companion.ISSUE_ILLEGAL_NO_EXPIRE_PARAM
+import tv.abema.flagfit.FlagTypeExpiryDateIllegalParamDetector.Companion.ISSUE_ILLEGAL_EXPIRY_DATE_INFINITE_PARAM
 
 @RunWith(JUnit4::class)
 class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
@@ -65,11 +65,11 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:12: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
+        src/foo/Example.kt:12: Error: EXPIRY_DATE_INFINITE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
         Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
             @FlagType.WorkInProgress(
             ^
-        src/foo/Example.kt:21: Error: NO_EXPIRE_DATE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
+        src/foo/Example.kt:21: Error: EXPIRY_DATE_INFINITE cannot be set for the expireDate of @FlagType.WorkInProgress and @FlagType.Experiment.
         Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalNoExpireParam]
             @FlagType.Experiment(
             ^
@@ -235,7 +235,7 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
 
   override fun getIssues(): MutableList<Issue> {
     return mutableListOf(
-      ISSUE_ILLEGAL_NO_EXPIRE_PARAM,
+      ISSUE_ILLEGAL_EXPIRY_DATE_INFINITE_PARAM,
       ISSUE_ILLEGAL_DATE
     )
   }
