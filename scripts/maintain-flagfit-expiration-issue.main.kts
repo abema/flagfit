@@ -5,6 +5,7 @@
 import org.json.JSONObject
 import org.kohsuke.github.GHIssueState
 import org.kohsuke.github.GitHub
+import org.kohsuke.github.HttpException
 import java.io.File
 import java.util.regex.Pattern
 
@@ -89,15 +90,20 @@ class FlagExpirationIssueMaintainer(
           key == matchText(text = body, patternRegex = keyPatternRegex)
         }
 
-        val collaborator = repo.collaboratorNames
-        val assignee = if (owner in collaborator) owner else fallbackAssigneeWhenOwnerNotPresent
-
         if (existingIssue == null) {
-          val issue = repo.createIssue(issueTitle)
-            .body(warningMessage)
-            .assignee(assignee)
-            .apply { if (labelName.isNotEmpty()) label(labelName) }
-            .create()
+          val issue = try {
+            repo.createIssue(issueTitle)
+              .body(warningMessage)
+              .assignee(owner)
+              .apply { if (labelName.isNotEmpty()) label(labelName) }
+              .create()
+          } catch (e: HttpException) {
+            repo.createIssue(issueTitle)
+              .body(warningMessage)
+              .assignee(fallbackAssigneeWhenOwnerNotPresent)
+              .apply { if (labelName.isNotEmpty()) label(labelName) }
+              .create()
+          }
           issue.comment(artifactUri)
           existingIssues.add(issue)
         } else {
