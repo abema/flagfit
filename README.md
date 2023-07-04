@@ -478,3 +478,11 @@ Flags that have passed their expiration date will be automatically created as is
 - The workflow allows you to set a cron schedule, so please set it as appropriate.
 - When setting feature flags with Flagfit, you will likely use `@BooleanFlag` or `@VariationFlag`, but please make sure that the key value is always unique.
 <img width="1253" alt="Sample issues" src="https://github.com/abema/flagfit/assets/51113946/e4e5715d-f77a-4ffc-abbd-429544c1c1fa">
+
+## Contribute
+
+If you want to contribute to this project, please set `AbemaStyle.xml` as the CodeStyle.
+
+Go to `Preferences` -> `Editor` -> `Code Style` -> `Scheme` -> `Import Scheme`.
+
+Select `AbemaStyle.xml` found at the root of this repository and apply.
