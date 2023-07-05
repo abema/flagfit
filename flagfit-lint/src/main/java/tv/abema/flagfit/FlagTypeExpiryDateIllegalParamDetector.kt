@@ -33,7 +33,7 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
     return type == AnnotationUsageType.DEFINITION || super.isApplicableAnnotationUsage(type)
   }
 
-  @Suppress("NewApi")
+  @Suppress("NewApi", "DEPRECATION")
   override fun visitAnnotationUsage(
     context: JavaContext,
     element: UElement,
@@ -65,9 +65,9 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
   ) {
     when (qualifiedName) {
       AnnotationPackagePath.PACKAGE_PATH_WIP, AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT -> {
-        val message = "`NO_EXPIRE_DATE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
+        val message = "`EXPIRY_DATE_INFINITE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
           "Please set the expiration date in the following format: \"yyyy-mm-dd\""
-        context.report(ISSUE_ILLEGAL_NO_EXPIRE_PARAM, element, location, message)
+        context.report(ISSUE_ILLEGAL_EXPIRY_DATE_INFINITE_PARAM, element, location, message)
       }
 
       AnnotationPackagePath.PACKAGE_PATH_OPS, AnnotationPackagePath.PACKAGE_PATH_PERMISSION -> {
@@ -87,10 +87,10 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
   }
 
   companion object {
-    val ISSUE_ILLEGAL_NO_EXPIRE_PARAM = Issue.create(
+    val ISSUE_ILLEGAL_EXPIRY_DATE_INFINITE_PARAM = Issue.create(
       id = "FlagfitIllegalNoExpireParam",
       briefDescription = "The argument of expireDate is illigal.",
-      explanation = "Do not set NO_EXPIRE_DATE for @FlagType.WorkInProgress and @FlagType.Experiment...",
+      explanation = "Do not set EXPIRY_DATE_INFINITE for @FlagType.WorkInProgress and @FlagType.Experiment...",
       category = Category.PRODUCTIVITY,
       priority = 4,
       severity = Severity.ERROR,
