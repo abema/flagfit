@@ -184,6 +184,40 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
               )
               @FlagType.WorkInProgress(
                 owner = "Hoge Fuga",
+                expiryDate = "2023-12-10"
+              )
+              fun awesomeFeatureEnabled(): Boolean
+          }
+          """.trimIndent()
+        )
+      )
+      .issues(*issues.toTypedArray())
+      .allowMissingSdk()
+      .run()
+      .expectClean()
+  }
+
+  @Test
+  fun testExpiryDateNotDefinedExpireDateFormatNoWarning() {
+    lint()
+      .files(
+        stabBooleanFlag,
+        stabFlagType,
+        kotlin(
+          """
+          package foo
+          import tv.abema.flagfit.FlagType
+          import tv.abema.flagfit.annotation.BooleanFlag
+          import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+          
+          interface Example {
+              @BooleanFlag(
+                key = "new-awesome-feature",
+                defaultValue = false
+              )
+              @FlagType.WorkInProgress(
+                owner = "Hoge Fuga",
                 expiryDate = EXPIRY_DATE_NOT_DEFINED
               )
               fun awesomeFeatureEnabled(): Boolean
