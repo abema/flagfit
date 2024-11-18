@@ -184,9 +184,15 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
               )
               @FlagType.WorkInProgress(
                 owner = "Hoge Fuga",
-                expiryDate = "2023-12-10"
+                expiryDate = EXPIRY_DATE_NOT_DEFINED
               )
               fun awesomeFeatureEnabled(): Boolean
+          }
+        
+          class Test {
+              fun test(example: Example) {
+                  example.awesomeFeatureEnabled()
+              }
           }
           """.trimIndent()
         )
