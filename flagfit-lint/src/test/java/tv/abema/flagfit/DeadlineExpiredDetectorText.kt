@@ -60,8 +60,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
         """
         src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
-        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
-         [FlagfitDeadlineExpired]
+        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function. [FlagfitDeadlineExpired]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
@@ -104,8 +103,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
         """
         src/foo/Example.kt:10: Warning: The @FlagType.Experiment owner: Hoge Fuga will expire soon!
         Please consider deleting @FlagType.Experiment as the expiry date of 2023-06-01 is scheduled to pass within a week.
-        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function.
-         [FlagfitDeadlineSoon]
+        The flag of key: "new-awesome-feature" is used in the awesomeExperimentFeatureEnabled function. [FlagfitDeadlineSoon]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
@@ -233,8 +231,7 @@ class DeadlineExpiredDetectorText : LintDetectorTest() {
         """
         src/foo/Example.kt:10: Warning: The @FlagType.Experiment created by owner: Hoge Fuga has expired!
         Please consider deleting @FlagType.Experiment as the expiration date has passed on 2023-06-01.
-        The flag of key: "new-awesome-feature" is used in the awesomeVariationFeatureEnabled function.
-         [FlagfitDeadlineExpired]
+        The flag of key: "new-awesome-feature" is used in the awesomeVariationFeatureEnabled function. [FlagfitDeadlineExpired]
             @FlagType.Experiment(
             ^
         0 errors, 1 warnings
