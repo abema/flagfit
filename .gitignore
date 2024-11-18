@@ -134,5 +134,6 @@ local.properties
 .idea/migrations.xml
 .idea/runConfigurations.xml
 .idea/caches/
+.idea/ktlint-plugin.xml
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij
