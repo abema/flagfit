@@ -130,5 +130,9 @@ gradle-app.setting
 local.properties
 .idea/kotlinScripting.xml
 .idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetSelector.xml
+.idea/migrations.xml
+.idea/runConfigurations.xml
+.idea/caches/
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij
