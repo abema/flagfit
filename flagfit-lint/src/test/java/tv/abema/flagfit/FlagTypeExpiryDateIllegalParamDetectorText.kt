@@ -210,6 +210,7 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
           import tv.abema.flagfit.annotation.BooleanFlag
           import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
           import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
+          import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_NOT_DEFINED
           
           interface Example {
               @BooleanFlag(
