@@ -154,7 +154,7 @@ class FlagTypeExpiryDateIllegalParamDetectorText : LintDetectorTest() {
       .run()
       .expect(
         """
-        src/foo/Example.kt:12: Error: The value of expireDate is not in the correct date format.
+        src/foo/Example.kt:12: Error: The value of expireDate is not in the correct date format. (expiryDate=2023-12-100)
         Please set the expiration date in the following format: "yyyy-mm-dd" [FlagfitIllegalDate]
             @FlagType.Ops(
             ^
