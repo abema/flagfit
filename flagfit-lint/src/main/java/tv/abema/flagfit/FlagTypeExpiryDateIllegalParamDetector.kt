@@ -51,8 +51,9 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
     }
     if (expiryDate == FlagType.EXPIRY_DATE_NOT_DEFINED) return
     if (!isDateFormatValid(expiryDate)) {
-      val message = "The value of expireDate is not in the correct date format.\n" +
-        "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+      val message =
+        "The value of expireDate is not in the correct date format. (expiryDate=$expiryDate)\n" +
+            "Please set the expiration date in the following format: \"yyyy-mm-dd\""
       context.report(ISSUE_ILLEGAL_DATE, element, location, message)
     }
   }
@@ -65,8 +66,9 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
   ) {
     when (qualifiedName) {
       AnnotationPackagePath.PACKAGE_PATH_WIP, AnnotationPackagePath.PACKAGE_PATH_EXPERIMENT -> {
-        val message = "`EXPIRY_DATE_INFINITE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
-          "Please set the expiration date in the following format: \"yyyy-mm-dd\""
+        val message =
+          "`EXPIRY_DATE_INFINITE` cannot be set for the expireDate of `@FlagType.WorkInProgress` and `@FlagType.Experiment`.\n" +
+              "Please set the expiration date in the following format: \"yyyy-mm-dd\""
         context.report(ISSUE_ILLEGAL_EXPIRY_DATE_INFINITE_PARAM, element, location, message)
       }
 

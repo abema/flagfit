@@ -1,14 +1,25 @@
 package tv.abema.fragfit
 
 import tv.abema.flagfit.FlagType
-import tv.abema.flagfit.FlagType.Companion.EXPIRY_DATE_INFINITE
-import tv.abema.flagfit.FlagType.Companion.OWNER_NOT_DEFINED
 import tv.abema.flagfit.JustFlagSource
 import tv.abema.flagfit.annotation.BooleanFlag
 import tv.abema.flagfit.annotation.DebugWith
 import tv.abema.flagfit.annotation.ReleaseWith
 
 interface SampleFlagService {
+
+  companion object {
+    // FIXME: WORKAROUND: If reference constants from the flagfit library in annotations, the Linter will fail to evaluate the constants and will become null
+    const val EXPIRY_DATE_INFINITE = FlagType.EXPIRY_DATE_INFINITE
+
+    // FIXME: WORKAROUND: If reference constants from the flagfit library in annotations, the Linter will fail to evaluate the constants and will become null
+    @Suppress("DEPRECATION")
+    const val OWNER_NOT_DEFINED = FlagType.OWNER_NOT_DEFINED
+
+    // FIXME: WORKAROUND: If reference constants from the flagfit library in annotations, the Linter will fail to evaluate the constants and will become null
+    @Suppress("DEPRECATION")
+    const val EXPIRY_DATE_NOT_DEFINED = FlagType.EXPIRY_DATE_NOT_DEFINED
+  }
 
   @BooleanFlag(
     key = "new-awesome-wip-feature",

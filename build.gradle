@@ -1,19 +1,36 @@
 buildscript {
-    ext {
-        lintVersion = '31.0.2'
+  ext {
+    lintVersion = '31.7.2'
+  }
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
+    classpath 'com.android.tools.build:gradle:8.7.2'
+  }
+}
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  // Added this block:
+  afterEvaluate { project ->
+    if (project.hasProperty("kotlin")) {
+      project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+          jvmTarget = "11"
+        }
+      }
     }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10'
-        classpath 'com.android.tools.build:gradle:7.4.2'
-    }
+  }
 }
 subprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+  repositories {
+    google()
+    mavenCentral()
+  }
 }
