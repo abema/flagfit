@@ -62,9 +62,9 @@ class DeadlineExpiredDetector : Detector(), SourceCodeScanner {
     }
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val owner = (annotationAttributes.firstOrNull { it.name == "owner" }?.evaluate() as String?)
-      ?: ""
+      ?: return
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
-      ?.evaluate() as String?) ?: ""
+      ?.evaluate() as String?) ?: return
     val location = context.getLocation(element)
     if (expiryDate == EXPIRY_DATE_INFINITE) return
     if (owner == OWNER_NOT_DEFINED || expiryDate == EXPIRY_DATE_NOT_DEFINED) return

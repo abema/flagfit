@@ -44,7 +44,7 @@ class FlagTypeExpiryDateIllegalParamDetector : Detector(), SourceCodeScanner {
     val location = context.getLocation(element)
     val annotationAttributes = annotationInfo.annotation.attributeValues
     val expiryDate = (annotationAttributes.firstOrNull { it.name == "expiryDate" }
-      ?.evaluate() as String?) ?: ""
+      ?.evaluate() as String?) ?: return
     if (expiryDate == FlagType.EXPIRY_DATE_INFINITE) {
       reportInfiniteExpiryDateErrorIfNeeded(qualifiedName, context, element, location)
       return
