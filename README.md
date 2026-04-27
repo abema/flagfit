@@ -462,6 +462,44 @@ val flagfit = Flagfit(
 )
 ```
 
+## R8 / ProGuard
+
+Flagfit uses `Proxy.newProxyInstance` and reads each interface method's annotations
+via reflection at runtime. To keep this working under code shrinking — including
+**R8 fullMode**, which is the default since AGP 8.0 — both `flagfit` and
+`flagfit-flagtype` ship consumer ProGuard rules in their `META-INF/proguard/`
+directory.
+
+If you depend on `flagfit:1.1.8` (or newer) and `flagfit-flagtype:1.1.8` (or newer)
+no extra app-side configuration is required — the bundled rules already keep:
+
+- the flagfit annotation classes (`@BooleanFlag`, `@VariationFlag`, `@BooleanEnv`,
+  `@DebugWith`, `@ReleaseWith`, `@DefaultWith`) and their runtime values,
+- any interface that declares a flagfit-annotated method (so `Flagfit.create()`'s
+  proxy + `declaredMethods` reflection still works after shrinking),
+- every `FlagSource` subclass referenced via `@DebugWith` / `@ReleaseWith` /
+  `@DefaultWith` annotation values,
+- `FlagType` and all its inner annotation / `AnnotationAdapter` classes.
+
+### Workaround for older versions
+
+If you can't yet upgrade to a version that ships these rules, add the following to
+your app's `proguard-rules.pro`:
+
+```proguard
+-keepattributes RuntimeVisibleAnnotations,AnnotationDefault,Signature
+-keep class tv.abema.flagfit.annotation.**
+-keep class tv.abema.flagfit.SuspendReturnType
+-keep class tv.abema.flagfit.FlagType
+-keep class tv.abema.flagfit.FlagType$* { *; }
+-keep class * extends tv.abema.flagfit.FlagSource
+
+-if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
+-keep,allowobfuscation interface <1>
+-if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
+-keep,allowobfuscation interface <1>
+```
+
 ## Lint check based on expiration date
 
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
