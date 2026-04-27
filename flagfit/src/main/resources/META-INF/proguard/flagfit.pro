@@ -16,6 +16,15 @@
 -if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
 -keep,allowobfuscation interface <1>
 
+# Also keep subinterfaces of the above, because callers may proxy a child
+# interface (e.g. `interface Child : Parent`) whose annotated methods live on
+# the parent. R8 fullMode would otherwise be free to strip / merge `Child`.
+-if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+-if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
 # Keep the annotated methods (and their annotations) on those interfaces so
 # Method.getAnnotations() returns the real values.
 -keepclassmembers,allowobfuscation interface * {

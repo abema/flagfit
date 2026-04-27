@@ -498,6 +498,23 @@ your app's `proguard-rules.pro`:
 -keep,allowobfuscation interface <1>
 -if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
 -keep,allowobfuscation interface <1>
+
+# Subinterfaces of an annotated flag service must also survive R8 fullMode.
+-if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
+-keep,allowobfuscation interface * extends <1>
+-if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+# Flagfit reads each annotated method's annotations via reflection, so the
+# methods themselves must be preserved on every flag-service interface.
+-keepclassmembers,allowobfuscation interface * {
+    @tv.abema.flagfit.annotation.BooleanFlag <methods>;
+    @tv.abema.flagfit.annotation.VariationFlag <methods>;
+    @tv.abema.flagfit.annotation.BooleanEnv <methods>;
+    @tv.abema.flagfit.annotation.DebugWith <methods>;
+    @tv.abema.flagfit.annotation.ReleaseWith <methods>;
+    @tv.abema.flagfit.annotation.DefaultWith <methods>;
+}
 ```
 
 ## Lint check based on expiration date
