@@ -464,64 +464,9 @@ val flagfit = Flagfit(
 
 ## R8 / ProGuard
 
-Flagfit uses `Proxy.newProxyInstance` and reads each interface method's annotations
-via reflection at runtime. To keep this working under code shrinking — including
-**R8 fullMode**, which is the default since AGP 8.0 — both `flagfit` and
-`flagfit-flagtype` ship consumer ProGuard rules in their `META-INF/proguard/`
-directory.
+If you are using R8 the shrinking and obfuscation rules are included automatically.
 
-If you depend on `flagfit:1.1.8` (or newer) and `flagfit-flagtype:1.1.8` (or newer)
-no extra app-side configuration is required — the bundled rules already keep:
-
-- the flagfit annotation classes (`@BooleanFlag`, `@VariationFlag`, `@BooleanEnv`,
-  `@DebugWith`, `@ReleaseWith`, `@DefaultWith`) and their runtime values,
-- any interface that declares a flagfit-annotated method (so `Flagfit.create()`'s
-  proxy + `declaredMethods` reflection still works after shrinking),
-- every `FlagSource` subclass referenced via `@DebugWith` / `@ReleaseWith` /
-  `@DefaultWith` annotation values,
-- `FlagType` and all its inner annotation / `AnnotationAdapter` classes.
-
-### Workaround for older versions
-
-If you can't yet upgrade to a version that ships these rules, add the following to
-your app's `proguard-rules.pro`:
-
-```proguard
--keepattributes RuntimeVisibleAnnotations
-
--keep,allowobfuscation class tv.abema.flagfit.annotation.BooleanFlag
--keep,allowobfuscation class tv.abema.flagfit.annotation.VariationFlag
--keep,allowobfuscation class tv.abema.flagfit.annotation.BooleanEnv
--keep,allowobfuscation class tv.abema.flagfit.annotation.DebugWith
--keep,allowobfuscation class tv.abema.flagfit.annotation.ReleaseWith
--keep,allowobfuscation class tv.abema.flagfit.annotation.DefaultWith
--keep,allowobfuscation class tv.abema.flagfit.SuspendReturnType
--keep,allowobfuscation class tv.abema.flagfit.FlagType
--keep,allowobfuscation class tv.abema.flagfit.FlagType$* { *; }
--keep,allowobfuscation class * extends tv.abema.flagfit.FlagSource
-
--if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
--keep,allowobfuscation interface <1>
--if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
--keep,allowobfuscation interface <1>
-
-# Subinterfaces of an annotated flag service must also survive R8 fullMode.
--if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
--keep,allowobfuscation interface * extends <1>
--if interface * { @tv.abema.flagfit.annotation.VariationFlag <methods>; }
--keep,allowobfuscation interface * extends <1>
-
-# Flagfit reads each annotated method's annotations via reflection, so the
-# methods themselves must be preserved on every flag-service interface.
--keepclassmembers,allowobfuscation interface * {
-    @tv.abema.flagfit.annotation.BooleanFlag <methods>;
-    @tv.abema.flagfit.annotation.VariationFlag <methods>;
-    @tv.abema.flagfit.annotation.BooleanEnv <methods>;
-    @tv.abema.flagfit.annotation.DebugWith <methods>;
-    @tv.abema.flagfit.annotation.ReleaseWith <methods>;
-    @tv.abema.flagfit.annotation.DefaultWith <methods>;
-}
-```
+ProGuard users must manually add the options from [flagfit.pro](flagfit/src/main/resources/META-INF/proguard/flagfit.pro) and [flagfit-flagtype.pro](flagfit-flagtype/src/main/resources/META-INF/proguard/flagfit-flagtype.pro).
 
 ## Lint check based on expiration date
 
