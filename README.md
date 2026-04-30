@@ -487,12 +487,18 @@ If you can't yet upgrade to a version that ships these rules, add the following 
 your app's `proguard-rules.pro`:
 
 ```proguard
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault,Signature
--keep class tv.abema.flagfit.annotation.**
--keep class tv.abema.flagfit.SuspendReturnType
--keep class tv.abema.flagfit.FlagType
--keep class tv.abema.flagfit.FlagType$* { *; }
--keep class * extends tv.abema.flagfit.FlagSource
+-keepattributes RuntimeVisibleAnnotations
+
+-keep,allowobfuscation class tv.abema.flagfit.annotation.BooleanFlag
+-keep,allowobfuscation class tv.abema.flagfit.annotation.VariationFlag
+-keep,allowobfuscation class tv.abema.flagfit.annotation.BooleanEnv
+-keep,allowobfuscation class tv.abema.flagfit.annotation.DebugWith
+-keep,allowobfuscation class tv.abema.flagfit.annotation.ReleaseWith
+-keep,allowobfuscation class tv.abema.flagfit.annotation.DefaultWith
+-keep,allowobfuscation class tv.abema.flagfit.SuspendReturnType
+-keep,allowobfuscation class tv.abema.flagfit.FlagType
+-keep,allowobfuscation class tv.abema.flagfit.FlagType$* { *; }
+-keep,allowobfuscation class * extends tv.abema.flagfit.FlagSource
 
 -if interface * { @tv.abema.flagfit.annotation.BooleanFlag <methods>; }
 -keep,allowobfuscation interface <1>
