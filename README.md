@@ -462,6 +462,12 @@ val flagfit = Flagfit(
 )
 ```
 
+## R8 / ProGuard
+
+If you are using R8 the shrinking and obfuscation rules are included automatically.
+
+ProGuard users must manually add the options from [flagfit.pro](flagfit/src/main/resources/META-INF/proguard/flagfit.pro) and [flagfit-flagtype.pro](flagfit-flagtype/src/main/resources/META-INF/proguard/flagfit-flagtype.pro).
+
 ## Lint check based on expiration date
 
 Flags that have passed their expiration date or are scheduled to expire within the next 7 days will be displayed as warnings in the IDE.
